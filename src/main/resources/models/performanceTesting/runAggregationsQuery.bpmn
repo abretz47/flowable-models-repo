@@ -3,8 +3,8 @@
   <process id="runAggregationsQuery" name="Run Aggregations Query" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
     <extensionElements>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
-      <design:creationdate><![CDATA[2026-04-17T20:36:09.362Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2026-04-17T20:36:09.362Z]]></design:modificationdate>
+      <design:creationdate><![CDATA[2026-04-20T16:32:22.901Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2026-04-20T16:32:22.901Z]]></design:modificationdate>
     </extensionElements>
     <scriptTask id="ScriptTask_1" name="Get Aggregations " scriptFormat="groovy" flowable:autoStoreVariables="false">
       <extensionElements>

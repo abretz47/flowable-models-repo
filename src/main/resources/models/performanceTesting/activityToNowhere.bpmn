@@ -3,8 +3,8 @@
   <process id="activityToNowhere" name="Activity to Nowhere" isExecutable="true">
     <extensionElements>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
-      <design:creationdate><![CDATA[2026-04-17T20:36:09.362Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2026-04-17T20:36:09.362Z]]></design:modificationdate>
+      <design:creationdate><![CDATA[2026-04-20T16:32:22.901Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2026-04-20T16:32:22.901Z]]></design:modificationdate>
     </extensionElements>
     <startEvent id="startnoneevent1" flowable:initiator="initiator">
       <extensionElements>

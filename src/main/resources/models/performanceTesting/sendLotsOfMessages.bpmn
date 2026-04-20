@@ -5,8 +5,8 @@
       <flowable:historyLevel><![CDATA[instance]]></flowable:historyLevel>
       <flowable:processSequence variableName="sequence"><![CDATA[mySequence]]></flowable:processSequence>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
-      <design:creationdate><![CDATA[2026-04-17T20:36:09.363Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2026-04-17T20:36:09.363Z]]></design:modificationdate>
+      <design:creationdate><![CDATA[2026-04-20T16:32:22.901Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2026-04-20T16:32:22.901Z]]></design:modificationdate>
     </extensionElements>
     <serviceTask id="VariableActivity_3" name="Initialize variables" flowable:async="true" flowable:delegateExpression="${initVariablesService}" flowable:extensionId="VariableActivity">
       <extensionElements>

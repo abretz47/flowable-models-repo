@@ -1,0 +1,12 @@
+{
+  "rows" : [ ],
+  "metadata" : {
+    "key" : "myForm",
+    "name" : "my Form",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "form",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-work-form-palette"
+  }
+}

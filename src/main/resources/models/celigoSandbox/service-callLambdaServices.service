@@ -1,0 +1,38 @@
+{
+  "type" : "REST",
+  "operations" : [ {
+    "name" : "Invoke Hello World",
+    "key" : "invokeHelloWorld",
+    "inputParameters" : [ {
+      "displayName" : "key1",
+      "name" : "key1",
+      "type" : "string",
+      "defaultValue" : "value1"
+    }, {
+      "displayName" : "key2",
+      "name" : "key2",
+      "type" : "string",
+      "defaultValue" : "value2"
+    }, {
+      "displayName" : "key3",
+      "name" : "key3",
+      "type" : "string",
+      "defaultValue" : "value3"
+    } ],
+    "outputParameters" : [ ],
+    "config" : {
+      "method" : "GET"
+    },
+    "type" : "search"
+  } ],
+  "config" : {
+    "baseUrl" : "https://9ai29rgts1.execute-api.eu-north-1.amazonaws.com/default/helloWorld",
+    "authorization" : {
+      "bearer" : {
+        "token" : "${flwAuthTokenUtils.getAccessToken('keycloak')}"
+      }
+    }
+  },
+  "name" : "Call Lambda Services",
+  "key" : "callLambdaServices"
+}

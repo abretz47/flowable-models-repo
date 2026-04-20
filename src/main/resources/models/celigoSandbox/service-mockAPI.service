@@ -1,0 +1,27 @@
+{
+  "type" : "REST",
+  "operations" : [ {
+    "name" : "Get Tracking Number",
+    "key" : "getTrackingNumber",
+    "inputParameters" : [ ],
+    "outputParameters" : [ {
+      "displayName" : "Tracking Number",
+      "name" : "trackingNumber",
+      "type" : "string",
+      "mappingName" : "trackingNumber",
+      "missingValueConfig" : "setToDefault",
+      "missingValueDefault" : "1926129646535273",
+      "nullValueConfig" : "setToDefault"
+    } ],
+    "config" : {
+      "url" : "/get-tracking-number",
+      "method" : "GET"
+    },
+    "type" : "search"
+  } ],
+  "config" : {
+    "baseUrl" : "https://9d79ff02-47c2-4db2-964a-b4e7b0f19757.mock.pstmn.io"
+  },
+  "name" : "Mock API",
+  "key" : "mockAPI"
+}

@@ -1,0 +1,33 @@
+{
+  "rows" : [ {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-output" ],
+        "stencilId" : "cloud-output"
+      },
+      "label" : "All items shipped?",
+      "labelAlign" : "top",
+      "value" : "<p>{{shipped}}</p>",
+      "defaultValue" : false,
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show"
+      },
+      "size" : 12,
+      "id" : "output1",
+      "type" : "htmlComponent"
+    } ]
+  } ],
+  "metadata" : {
+    "key" : "activatePartialFulfillment",
+    "name" : "Activate Partial Fulfillment",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "form",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-work-form-palette"
+  }
+}

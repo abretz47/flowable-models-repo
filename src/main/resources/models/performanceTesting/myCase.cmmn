@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/cmmn" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:design="http://flowable.org/design" targetNamespace="http://flowable.org/cmmn" design:palette="flowable-work-case-palette">
+  <case id="myCase" name="myCase" flowable:initiatorVariableName="initiator" flowable:candidateStarterGroups="flowableUser">
+    <extensionElements>
+      <flowable:eventType><![CDATA[myMessage]]></flowable:eventType>
+      <flowable:startEventCorrelationConfiguration><![CDATA[startNewInstance]]></flowable:startEventCorrelationConfiguration>
+      <flowable:eventOutParameter source="orderid" target="orderId"></flowable:eventOutParameter>
+      <flowable:eventOutParameter source="itemid" target="itemId"></flowable:eventOutParameter>
+      <flowable:eventOutParameter source="payload" target="payload"></flowable:eventOutParameter>
+    </extensionElements>
+    <casePlanModel id="onecaseplanmodel1" name="Case plan model" flowable:formKey="startForm" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:default-menu-navigation-size><![CDATA[expanded]]></flowable:default-menu-navigation-size>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <flowable:workformkey><![CDATA[workForm]]></flowable:workformkey>
+        <design:stencilid><![CDATA[CasePlanModel]]></design:stencilid>
+      </extensionElements>
+      <planItem id="planItemcmmnTask_1" name="Human task" definitionRef="cmmnTask_1">
+        <entryCriterion id="EntryCriterion_11" sentryRef="sentryEntryCriterion_11"></entryCriterion>
+      </planItem>
+      <planItem id="planItemcmmnTask_3" name="Process task" definitionRef="cmmnTask_3">
+        <itemControl>
+          <manualActivationRule></manualActivationRule>
+        </itemControl>
+      </planItem>
+      <planItem id="planItemcmmnTask_6" name="Data object create" definitionRef="cmmnTask_6">
+        <entryCriterion id="EntryCriterion_12" sentryRef="sentryEntryCriterion_12"></entryCriterion>
+      </planItem>
+      <planItem id="planItemcmmnTask_7" name="Service registry task" definitionRef="cmmnTask_7">
+        <itemControl>
+          <manualActivationRule></manualActivationRule>
+        </itemControl>
+      </planItem>
+      <planItem id="planItemcmmnTask_9" name="Initialize variables" definitionRef="cmmnTask_9"></planItem>
+      <planItem id="planItemProcessTask_11" name="Process task" definitionRef="ProcessTask_11">
+        <entryCriterion id="cmmnEntrySentry_10" sentryRef="sentrycmmnEntrySentry_10"></entryCriterion>
+      </planItem>
+      <sentry id="sentryEntryCriterion_11">
+        <extensionElements>
+          <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+        </extensionElements>
+        <planItemOnPart id="sentryOnPartEntryCriterion_11" sourceRef="planItemcmmnTask_6">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+      </sentry>
+      <sentry id="sentryEntryCriterion_12">
+        <extensionElements>
+          <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+        </extensionElements>
+        <planItemOnPart id="sentryOnPartEntryCriterion_12" sourceRef="planItemProcessTask_11">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+      </sentry>
+      <sentry id="sentrycmmnEntrySentry_10">
+        <extensionElements>
+          <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+        </extensionElements>
+        <planItemOnPart id="sentryOnPartcmmnEntrySentry_10" sourceRef="planItemcmmnTask_9">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+      </sentry>
+      <humanTask id="cmmnTask_1" name="Human task" flowable:assignee="${randomAssignee}" flowable:formFieldValidation="false">
+        <extensionElements>
+          <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+          <design:stencilid><![CDATA[HumanTask]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+        </extensionElements>
+      </humanTask>
+      <processTask id="cmmnTask_3" name="Process task" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+        <extensionElements>
+          <design:stencilid><![CDATA[ProcessTask]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+          <flowable:in source="initiator" target="initiator"></flowable:in>
+          <flowable:out source="result" target="result"></flowable:out>
+        </extensionElements>
+        <processRefExpression><![CDATA[humanProcess]]></processRefExpression>
+      </processTask>
+      <task id="cmmnTask_6" name="Data object create" flowable:async="true" flowable:exclusive="true" flowable:type="java" flowable:delegateExpression="${dataObjectServiceTask}">
+        <extensionElements>
+          <flowable:serviceTaskType><![CDATA[data-object]]></flowable:serviceTaskType>
+          <flowable:dataObjectMapping definitionKey="myDO" operationKey="create" type="create"></flowable:dataObjectMapping>
+          <flowable:inputParameter name="name" value="${orderId}"></flowable:inputParameter>
+          <design:stencilid><![CDATA[DataObjectCreateTask]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+          <design:servicetaskstoreresultvariabletransient><![CDATA[false]]></design:servicetaskstoreresultvariabletransient>
+        </extensionElements>
+      </task>
+      <task id="cmmnTask_7" name="Service registry task" flowable:type="java" flowable:delegateExpression="${serviceRegistryService}">
+        <extensionElements>
+          <flowable:serviceTaskType><![CDATA[service-registry]]></flowable:serviceTaskType>
+          <flowable:serviceMapping serviceModelKey="myDbDo" operationKey="search"></flowable:serviceMapping>
+          <flowable:outputVariableName><![CDATA[otherResult]]></flowable:outputVariableName>
+          <design:stencilid><![CDATA[ServiceRegistryTask]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+        </extensionElements>
+      </task>
+      <task id="cmmnTask_9" name="Initialize variables" flowable:type="java" flowable:delegateExpression="${initVariablesService}">
+        <extensionElements>
+          <flowable:overwrite><![CDATA[true]]></flowable:overwrite>
+          <design:stencilid><![CDATA[VariableActivity]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+        </extensionElements>
+      </task>
+      <processTask id="ProcessTask_11" name="Process task" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+        <extensionElements>
+          <design:stencilid><![CDATA[ProcessTask]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+          <flowable:out source="randomAssignee" target="randomAssignee"></flowable:out>
+        </extensionElements>
+        <processRefExpression><![CDATA[generateRandomAssignee]]></processRefExpression>
+      </processTask>
+    </casePlanModel>
+  </case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_myCase">
+      <cmmndi:CMMNShape id="CMMNShape_onecaseplanmodel1" cmmnElementRef="onecaseplanmodel1">
+        <dc:Bounds height="679.0" width="1272.0" x="269.0" y="120.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_1" cmmnElementRef="planItemcmmnTask_1">
+        <dc:Bounds height="80.0" width="100.0" x="956.0" y="243.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_EntryCriterion_11" cmmnElementRef="EntryCriterion_11">
+        <dc:Bounds height="28.0" width="18.0" x="947.0" y="269.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_3" cmmnElementRef="planItemcmmnTask_3">
+        <dc:Bounds height="80.0" width="100.0" x="956.0" y="431.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_6" cmmnElementRef="planItemcmmnTask_6">
+        <dc:Bounds height="80.0" width="100.0" x="676.0" y="243.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_EntryCriterion_12" cmmnElementRef="EntryCriterion_12">
+        <dc:Bounds height="28.0" width="18.0" x="667.0" y="269.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_7" cmmnElementRef="planItemcmmnTask_7">
+        <dc:Bounds height="80.0" width="100.0" x="1166.0" y="431.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_9" cmmnElementRef="planItemcmmnTask_9">
+        <dc:Bounds height="80.0" width="100.0" x="328.0" y="243.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemProcessTask_11" cmmnElementRef="planItemProcessTask_11">
+        <dc:Bounds height="80.0" width="100.0" x="475.0" y="243.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_10" cmmnElementRef="cmmnEntrySentry_10">
+        <dc:Bounds height="28.0" width="18.0" x="466.0" y="269.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="CMMNEdge_Connector_11" cmmnElementRef="planItemcmmnTask_6" targetCMMNElementRef="EntryCriterion_11">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="775.9499999999999" y="283.0"></di:waypoint>
+        <di:waypoint x="947.0" y="283.0"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_Connector_13" cmmnElementRef="planItemProcessTask_11" targetCMMNElementRef="EntryCriterion_12">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="574.9499999999325" y="283.0"></di:waypoint>
+        <di:waypoint x="667.0" y="283.0"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_11" cmmnElementRef="planItemcmmnTask_9" targetCMMNElementRef="cmmnEntrySentry_10">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="427.94999999994815" y="283.0"></di:waypoint>
+        <di:waypoint x="466.0" y="283.0"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</definitions>

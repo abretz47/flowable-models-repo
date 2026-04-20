@@ -1,0 +1,40 @@
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:flowable="http://flowable.org/dmn" id="definition_expeditePossibleTable" name="Expedite Possible Table" namespace="http://www.flowable.org/dmn">
+  <decision id="expeditePossibleTable" name="Expedite Possible Table">
+    <decisionTable id="decisionTable_expeditePossibleTable" hitPolicy="FIRST">
+      <input label="Ship to State">
+        <inputExpression id="inputExpression_744c827a-4567-4b8f-a27d-2c98dbeb7c24" typeRef="string">
+          <text>storeParams.shipToState</text>
+        </inputExpression>
+      </input>
+      <input label="Sales Amount">
+        <inputExpression id="inputExpression_fb93a811-9527-4f51-b0bc-a91ef3111305" typeRef="number">
+          <text>root. itemsToShip.salesAmount</text>
+        </inputExpression>
+      </input>
+      <output id="outputExpression_2" label="Is Expedited" name="isExpedited" typeRef="boolean"></output>
+      <rule>
+        <inputEntry id="inputEntry_744c827a-4567-4b8f-a27d-2c98dbeb7c24_1">
+          <text><![CDATA[${storeParams.shipToState.contains(root.itemsToShip.state)}]]></text>
+        </inputEntry>
+        <inputEntry id="inputEntry_fb93a811-9527-4f51-b0bc-a91ef3111305_1">
+          <text><![CDATA[${root.itemsToShip.salesAmount > storeParams.salesThreshold}]]></text>
+        </inputEntry>
+        <outputEntry id="outputEntry_2_1">
+          <text><![CDATA[true]]></text>
+        </outputEntry>
+      </rule>
+      <rule>
+        <inputEntry id="inputEntry_744c827a-4567-4b8f-a27d-2c98dbeb7c24_2">
+          <text><![CDATA[-]]></text>
+        </inputEntry>
+        <inputEntry id="inputEntry_fb93a811-9527-4f51-b0bc-a91ef3111305_2">
+          <text><![CDATA[-]]></text>
+        </inputEntry>
+        <outputEntry id="outputEntry_2_2">
+          <text><![CDATA[false]]></text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI></dmndi:DMNDI>
+</definitions>

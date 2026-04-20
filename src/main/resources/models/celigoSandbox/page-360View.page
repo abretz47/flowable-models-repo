@@ -1,0 +1,94 @@
+{
+  "rows" : [ {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "Component" ],
+        "stencilId" : "work-case-list"
+      },
+      "label" : "Open Fulfillments",
+      "labelAlign" : "top",
+      "value" : "{{openFulfillments}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "filterId" : "running",
+        "scopeDefinitionKey" : "bOSSCase",
+        "style" : "wide",
+        "showTotal" : true
+      },
+      "size" : 12,
+      "id" : "work-case-list1",
+      "type" : "workCaseList"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "Component" ],
+        "stencilId" : "work-chart"
+      },
+      "label" : "Average Fulfillment Time",
+      "labelAlign" : "top",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "feature" : "case-instance",
+        "filter" : "created",
+        "from" : "P-7D",
+        "to" : "P0D",
+        "subtype" : "barGraph",
+        "groupBy" : "day",
+        "reportType" : "duration",
+        "scopeDefinitionKey" : "bOSSCase",
+        "showLegend" : true
+      },
+      "size" : 12,
+      "id" : "work-chart1",
+      "type" : "workChart"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "Component" ],
+        "stencilId" : "work-chart"
+      },
+      "label" : "Average Task Time",
+      "labelAlign" : "top",
+      "value" : "{{averageTaskTime}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "feature" : "task-instance",
+        "filter" : "finished",
+        "from" : "P-7D",
+        "to" : "P0D",
+        "subtype" : "pieChart",
+        "groupBy" : "day",
+        "reportType" : "duration",
+        "scopeDefinitionKey" : "bOSSCase",
+        "showLegend" : true
+      },
+      "size" : 12,
+      "id" : "work-chart2",
+      "type" : "workChart"
+    } ]
+  } ],
+  "metadata" : {
+    "key" : "360View",
+    "name" : "360 View",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "page",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-work-page-palette",
+    "template" : true
+  }
+}

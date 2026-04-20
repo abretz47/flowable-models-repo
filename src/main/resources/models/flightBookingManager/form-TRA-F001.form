@@ -1,0 +1,465 @@
+{
+  "rows" : [ {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-sub-panel" ],
+        "stencilId" : "cloud-sub-panel"
+      },
+      "label" : "Flight Details",
+      "labelAlign" : "top",
+      "value" : "{{flightDetails}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "collapsible" : false,
+        "collapsed" : false,
+        "showBorder" : true,
+        "saveButtonVisible" : true,
+        "saveButtonEnabled" : true,
+        "cancelButtonVisible" : true,
+        "cancelButtonEnabled" : true,
+        "hideCancelCrossButton" : false,
+        "layoutDefinition" : {
+          "rows" : [ {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{origin}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Origin",
+              "id" : "text2",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{destination}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Destination",
+              "id" : "text3",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-date" ],
+                "stencilId" : "cloud-date"
+              },
+              "labelAlign" : "top",
+              "value" : "{{departureDate}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Departure Date",
+              "id" : "date4",
+              "type" : "date"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-date" ],
+                "stencilId" : "cloud-date"
+              },
+              "labelAlign" : "top",
+              "value" : "{{returnDate}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Return Date",
+              "id" : "date5",
+              "type" : "date"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{travelClass}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Travel Class",
+              "id" : "text6",
+              "type" : "text"
+            } ]
+          } ]
+        }
+      },
+      "size" : 12,
+      "tabIndex" : 0,
+      "id" : "sub-panel1",
+      "type" : "panel"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-sub-panel" ],
+        "stencilId" : "cloud-sub-panel"
+      },
+      "label" : "Passenger Information",
+      "labelAlign" : "top",
+      "value" : "{{passengerInfo}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "collapsible" : false,
+        "collapsed" : false,
+        "showBorder" : true,
+        "saveButtonVisible" : true,
+        "saveButtonEnabled" : true,
+        "cancelButtonVisible" : true,
+        "cancelButtonEnabled" : true,
+        "hideCancelCrossButton" : false,
+        "layoutDefinition" : {
+          "rows" : [ {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{firstName}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "First Name",
+              "id" : "text8",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{lastName}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Last Name",
+              "id" : "text9",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-date" ],
+                "stencilId" : "cloud-date"
+              },
+              "labelAlign" : "top",
+              "value" : "{{dateOfBirth}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Date of Birth",
+              "id" : "date10",
+              "type" : "date"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{gender}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Gender",
+              "id" : "text11",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{passportNumber}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Passport Number",
+              "id" : "text12",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{nationality}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Nationality",
+              "id" : "text13",
+              "type" : "text"
+            } ]
+          } ]
+        }
+      },
+      "size" : 12,
+      "tabIndex" : 0,
+      "id" : "sub-panel7",
+      "type" : "panel"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-number" ],
+        "stencilId" : "cloud-number"
+      },
+      "labelAlign" : "top",
+      "value" : "{{selectedFlight}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show"
+      },
+      "size" : 12,
+      "tabIndex" : 0,
+      "label" : "Selected Flight",
+      "id" : "number15",
+      "type" : "number"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-sub-panel" ],
+        "stencilId" : "cloud-sub-panel"
+      },
+      "label" : "Billing Address",
+      "labelAlign" : "top",
+      "value" : "{{billingAddress}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "collapsible" : false,
+        "collapsed" : false,
+        "showBorder" : true,
+        "saveButtonVisible" : true,
+        "saveButtonEnabled" : true,
+        "cancelButtonVisible" : true,
+        "cancelButtonEnabled" : true,
+        "hideCancelCrossButton" : false,
+        "layoutDefinition" : {
+          "rows" : [ {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{address}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Address",
+              "id" : "text17",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{city}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "City",
+              "id" : "text18",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{state}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "State",
+              "id" : "text19",
+              "type" : "text"
+            } ]
+          }, {
+            "cols" : [ {
+              "designInfo" : {
+                "stencilSuperIds" : [ "base-text" ],
+                "stencilId" : "cloud-text"
+              },
+              "labelAlign" : "top",
+              "value" : "{{zip}}",
+              "ignore" : false,
+              "visible" : true,
+              "enabled" : true,
+              "isRequired" : false,
+              "extraSettings" : {
+                "validationPanelDisplay" : "show"
+              },
+              "size" : 12,
+              "tabIndex" : 0,
+              "label" : "Zip Code",
+              "id" : "text20",
+              "type" : "text"
+            } ]
+          } ]
+        }
+      },
+      "size" : 12,
+      "tabIndex" : 0,
+      "id" : "sub-panel16",
+      "type" : "panel"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-text" ],
+        "stencilId" : "cloud-text"
+      },
+      "labelAlign" : "top",
+      "value" : "{{bookingReference}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show"
+      },
+      "size" : 12,
+      "tabIndex" : 0,
+      "label" : "Booking Reference",
+      "id" : "text22",
+      "type" : "text"
+    } ]
+  } ],
+  "metadata" : {
+    "key" : "TRA-F001",
+    "name" : "Flight Booking Process",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "form",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-work-form-palette"
+  }
+}

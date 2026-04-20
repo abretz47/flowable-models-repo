@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:design="http://flowable.org/design" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://flowable.org/test" design:palette="flowable-work-process-palette">
+  <process id="createBigPayload" name="Create Big Payload" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
+    <extensionElements>
+      <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
+      <design:creationdate><![CDATA[2026-04-17T20:36:09.363Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2026-04-17T20:36:09.363Z]]></design:modificationdate>
+    </extensionElements>
+    <scriptTask id="ScriptTask_1" name="Create Payload" scriptFormat="groovy" flowable:autoStoreVariables="false">
+      <extensionElements>
+        <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+      <script><![CDATA[import groovy.json.JsonOutput
+import java.security.SecureRandom
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+
+// Read targetKB from process var (default 8)
+int targetKB = (execution != null && execution.hasVariable('targetKB')) ?
+        (execution.getVariable('targetKB') as Integer) : 8
+int targetBytes = Math.max(1024, targetKB * 1024)
+
+// Locals inside the script's run(), closures can capture these fine
+def rnd = new SecureRandom()
+def alpha = (('a'..'z') + ('A'..'Z') + ('0'..'9')).toList()
+
+// Closure instead of method -> can see rnd/alpha
+def randStr = { int n ->
+    def sb = new StringBuilder(n)
+    for (int i = 0; i < n; i++) sb.append(alpha[rnd.nextInt(alpha.size())])
+    sb.toString()
+}
+
+Map<String, Object> baseObj = [
+  app       : "myapp",
+  env       : "dev",
+  level     : "INFO",
+  timestamp : OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+  traceId   : UUID.randomUUID().toString(),
+  k8s       : [namespace: "flowable", pod: "myapp-0", node: "worker-1"],
+  items     : [],
+  padding   : [:]
+]
+
+// Helper uses the closure
+def newItem = {
+  [
+    id     : UUID.randomUUID().toString(),
+    name   : randStr(24),
+    value  : randStr(64),
+    tags   : (1..5).collect { randStr(8) },
+    nested : [
+      code     : randStr(12),
+      summary  : randStr(80),
+      details  : randStr(160),
+      metrics  : [
+        latencyMs : rnd.nextInt(2000),
+        sizeBytes : rnd.nextInt(500000),
+        ok        : rnd.nextBoolean()
+      ],
+      blobs    : (1..3).collect { randStr(120) }
+    ]
+  ]
+}
+
+String json = JsonOutput.toJson(baseObj)
+while (json.getBytes("UTF-8").length < targetBytes) {
+  if (rnd.nextBoolean()) {
+    baseObj.items << newItem()
+  } else {
+    def key = "p${baseObj.padding.size()}"
+    baseObj.padding[key] = randStr(256 + rnd.nextInt(512))
+  }
+  json = JsonOutput.toJson(baseObj)
+}
+
+// Or: flw.setOutput("bigJson", baseObj) if you want a Map
+flw.setOutput("bigJson", baseObj)
+]]></script>
+    </scriptTask>
+    <startEvent id="startnoneevent1" flowable:initiator="initiator" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <design:stencilid><![CDATA[StartNoneEvent]]></design:stencilid>
+      </extensionElements>
+    </startEvent>
+    <endEvent id="EndNoneEvent_3">
+      <extensionElements>
+        <design:stencilid><![CDATA[EndNoneEvent]]></design:stencilid>
+      </extensionElements>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_4" sourceRef="ScriptTask_1" targetRef="EndNoneEvent_3">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_2" sourceRef="startnoneevent1" targetRef="ScriptTask_1">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_createBigPayload">
+    <bpmndi:BPMNPlane bpmnElement="createBigPayload" id="BPMNPlane_createBigPayload">
+      <bpmndi:BPMNShape bpmnElement="ScriptTask_1" id="BPMNShape_ScriptTask_1">
+        <omgdc:Bounds height="80.0" width="100.0" x="410.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startnoneevent1" id="BPMNShape_startnoneevent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="317.0" y="261.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="EndNoneEvent_3" id="BPMNShape_EndNoneEvent_3">
+        <omgdc:Bounds height="28.0" width="28.0" x="560.0" y="262.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_4" id="BPMNEdge_SequenceFlow_4" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
+        <omgdi:waypoint x="510.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="560.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_2" id="BPMNEdge_SequenceFlow_2" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="347.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="410.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

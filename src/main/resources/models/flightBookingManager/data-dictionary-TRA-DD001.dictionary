@@ -1,0 +1,117 @@
+{
+  "types" : {
+    "flightDetails" : {
+      "label" : "Flight Details",
+      "type" : "object",
+      "index" : 0,
+      "properties" : {
+        "origin" : {
+          "label" : "Origin",
+          "type" : "string",
+          "index" : 0
+        },
+        "destination" : {
+          "label" : "Destination",
+          "type" : "string",
+          "index" : 1
+        },
+        "departureDate" : {
+          "label" : "Departure Date",
+          "type" : "date",
+          "index" : 2
+        },
+        "returnDate" : {
+          "label" : "Return Date",
+          "type" : "date",
+          "index" : 3
+        },
+        "travelClass" : {
+          "label" : "Travel Class",
+          "type" : "string",
+          "index" : 4
+        }
+      }
+    },
+    "passengerInfo" : {
+      "label" : "Passenger Information",
+      "type" : "object",
+      "index" : 1,
+      "properties" : {
+        "firstName" : {
+          "label" : "First Name",
+          "type" : "string",
+          "index" : 0
+        },
+        "lastName" : {
+          "label" : "Last Name",
+          "type" : "string",
+          "index" : 1
+        },
+        "dateOfBirth" : {
+          "label" : "Date of Birth",
+          "type" : "date",
+          "index" : 2
+        },
+        "gender" : {
+          "label" : "Gender",
+          "type" : "string",
+          "index" : 3
+        },
+        "passportNumber" : {
+          "label" : "Passport Number",
+          "type" : "string",
+          "index" : 4
+        },
+        "nationality" : {
+          "label" : "Nationality",
+          "type" : "string",
+          "index" : 5
+        }
+      }
+    },
+    "billingAddress" : {
+      "label" : "Billing Address",
+      "type" : "object",
+      "index" : 2,
+      "properties" : {
+        "address" : {
+          "label" : "Address",
+          "type" : "string",
+          "index" : 0
+        },
+        "city" : {
+          "label" : "City",
+          "type" : "string",
+          "index" : 1
+        },
+        "state" : {
+          "label" : "State",
+          "type" : "string",
+          "index" : 2
+        },
+        "zip" : {
+          "label" : "Zip Code",
+          "type" : "string",
+          "index" : 3
+        }
+      }
+    },
+    "optionalServices" : {
+      "label" : "Optional Services",
+      "type" : "object",
+      "index" : 3
+    },
+    "bookingReference" : {
+      "label" : "Booking Reference",
+      "type" : "string",
+      "index" : 4
+    },
+    "selectedFlight" : {
+      "label" : "Selected Flight ",
+      "type" : "integer",
+      "index" : 5
+    }
+  },
+  "name" : "Flight Booking Data Model",
+  "key" : "TRA-DD001"
+}

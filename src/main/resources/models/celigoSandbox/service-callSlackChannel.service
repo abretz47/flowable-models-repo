@@ -1,0 +1,35 @@
+{
+  "type" : "REST",
+  "operations" : [ {
+    "name" : "inventoryManagers",
+    "key" : "inventoryManagers",
+    "inputParameters" : [ {
+      "displayName" : "Text",
+      "name" : "text",
+      "type" : "string",
+      "required" : true,
+      "defaultValue" : "A new expedited order to has arrived for <https://celigo-demo.projects.flowable.io/#/work/assignee/case/${root.id}/task/${taskInstanceId}|assignment and approval>"
+    }, {
+      "displayName" : "Username",
+      "name" : "username",
+      "type" : "string",
+      "required" : false,
+      "defaultValue" : "Flowable"
+    }, {
+      "displayName" : "Channel",
+      "name" : "channel",
+      "type" : "string",
+      "defaultValue" : "inventory-managers"
+    } ],
+    "outputParameters" : [ ],
+    "config" : {
+      "method" : "POST"
+    },
+    "type" : "search"
+  } ],
+  "config" : {
+    "baseUrl" : "https://hooks.slack.com/services/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"
+  },
+  "name" : "Call Slack Channel",
+  "key" : "callSlackChannel"
+}

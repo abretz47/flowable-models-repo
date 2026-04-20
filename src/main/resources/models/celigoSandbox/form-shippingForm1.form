@@ -1,0 +1,59 @@
+{
+  "outcomes" : [ {
+    "label" : "Item Shipped",
+    "value" : "true",
+    "visible" : null,
+    "enabled" : null,
+    "outcomeFormKey" : null,
+    "ignorePayload" : null,
+    "ignoreValidation" : null,
+    "primary" : true,
+    "styleClass" : null,
+    "navigationUrl" : null
+  }, {
+    "label" : "Not Available",
+    "value" : "false",
+    "visible" : null,
+    "enabled" : null,
+    "outcomeFormKey" : null,
+    "ignorePayload" : null,
+    "ignoreValidation" : null,
+    "primary" : null,
+    "styleClass" : null,
+    "navigationUrl" : null
+  } ],
+  "outcomevariablename" : "item_shipped",
+  "rows" : [ {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-pdf" ],
+        "stencilId" : "cloud-pdf"
+      },
+      "label" : "Shipping Label",
+      "labelAlign" : "top",
+      "value" : "{{shippingLabel}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "height" : 600,
+        "showBorder" : true,
+        "type" : "pdf"
+      },
+      "size" : 12,
+      "id" : "pdf1",
+      "type" : "pdfViewer"
+    } ]
+  } ],
+  "metadata" : {
+    "key" : "shippingForm1",
+    "name" : "Shipping Form",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "form",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-engage-form-palette"
+  }
+}

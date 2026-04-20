@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:design="http://flowable.org/design" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://flowable.org/test" design:palette="flowable-work-process-palette">
+  <process id="sendLotsOfMessages" name="send lots of messages" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
+    <extensionElements>
+      <flowable:historyLevel><![CDATA[instance]]></flowable:historyLevel>
+      <flowable:processSequence variableName="sequence"><![CDATA[mySequence]]></flowable:processSequence>
+      <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
+      <design:creationdate><![CDATA[2026-04-17T20:36:09.363Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2026-04-17T20:36:09.363Z]]></design:modificationdate>
+    </extensionElements>
+    <serviceTask id="VariableActivity_3" name="Initialize variables" flowable:async="true" flowable:delegateExpression="${initVariablesService}" flowable:extensionId="VariableActivity">
+      <extensionElements>
+        <flowable:overwrite><![CDATA[true]]></flowable:overwrite>
+        <flowable:variableMapping name="iterArray" valueType="jsonArray" value="54"></flowable:variableMapping>
+        <design:stencilid><![CDATA[VariableActivity]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="SendEventTask_4" name="Send event task" flowable:type="send-event">
+      <extensionElements>
+        <flowable:eventType><![CDATA[myMessage]]></flowable:eventType>
+        <flowable:eventInParameter source="${sequence + loopCounter}" target="orderid"></flowable:eventInParameter>
+        <flowable:eventInParameter source="${sequence + loopCounter}" target="itemid"></flowable:eventInParameter>
+        <flowable:eventInParameter source="${bigJson}" target="payload"></flowable:eventInParameter>
+        <flowable:channelKey><![CDATA[myOutboundChannel]]></flowable:channelKey>
+        <design:stencilid><![CDATA[SendEventTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="true" flowable:collection="${iterArray}" flowable:elementVariable="element">
+        <extensionElements></extensionElements>
+      </multiInstanceLoopCharacteristics>
+    </serviceTask>
+    <scriptTask id="ScriptTask_4" name="Generate Big Payload" scriptFormat="groovy" flowable:autoStoreVariables="false">
+      <extensionElements>
+        <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+      <script><![CDATA[import com.fasterxml.jackson.databind.ObjectMapper
+import java.security.SecureRandom
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.UUID
+
+ObjectMapper mapper = new ObjectMapper()
+
+// Read targetKB from process var (default 8)
+int targetKB = 8
+if (execution != null && execution.hasVariable('targetKB')) {
+    Object raw = execution.getVariable('targetKB')
+    if (raw instanceof Number) {
+        targetKB = ((Number) raw).intValue()
+    } else if (raw != null) {
+        targetKB = Integer.parseInt(raw.toString())
+    }
+}
+
+int targetBytes = Math.max(1024, targetKB * 1024)
+
+SecureRandom rnd = new SecureRandom()
+List<String> alpha = []
+alpha.addAll(('a'..'z').collect { it.toString() })
+alpha.addAll(('A'..'Z').collect { it.toString() })
+alpha.addAll(('0'..'9').collect { it.toString() })
+
+def randStr = { int n ->
+    StringBuilder sb = new StringBuilder(n)
+    for (int i = 0; i < n; i++) {
+        sb.append(alpha.get(rnd.nextInt(alpha.size())))
+    }
+    sb.toString()
+}
+
+Map<String, Object> baseObj = [
+    app      : 'myapp',
+    env      : 'dev',
+    level    : 'INFO',
+    timestamp: OffsetDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME),
+    traceId  : UUID.randomUUID().toString(),
+    k8s      : [
+        namespace: 'flowable',
+        pod      : 'myapp-0',
+        node     : 'worker-1'
+    ],
+    items    : [],
+    padding  : [:]
+]
+
+def newItem = {
+    [
+        id    : UUID.randomUUID().toString(),
+        name  : randStr(24),
+        value : randStr(64),
+        tags  : (1..5).collect { randStr(8) },
+        nested: [
+            code   : randStr(12),
+            summary: randStr(80),
+            details: randStr(160),
+            metrics: [
+                latencyMs: rnd.nextInt(2000),
+                sizeBytes: rnd.nextInt(500000),
+                ok       : rnd.nextBoolean()
+            ],
+            blobs  : (1..3).collect { randStr(120) }
+        ]
+    ]
+}
+
+byte[] jsonBytes = mapper.writeValueAsBytes(baseObj)
+while (jsonBytes.length < targetBytes) {
+    if (rnd.nextBoolean()) {
+        ((List) baseObj.items).add(newItem())
+    } else {
+        String key = "p" + ((Map) baseObj.padding).size()
+        ((Map) baseObj.padding).put(key, randStr(256 + rnd.nextInt(512)))
+    }
+    jsonBytes = mapper.writeValueAsBytes(baseObj)
+}
+
+String json = new String(jsonBytes, 'UTF-8')
+flw.setOutput('bigJson', json)]]></script>
+    </scriptTask>
+    <callActivity id="CallActivity_4" name="Too Many Variables" flowable:async="true" flowable:exclusive="false" calledElement="tooManyVariables" flowable:sameDeployment="true" flowable:fallbackToDefaultTenant="true">
+      <extensionElements>
+        <flowable:includeInHistory><![CDATA[true]]></flowable:includeInHistory>
+        <design:stencilid><![CDATA[CallActivity]]></design:stencilid>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="false" flowable:collection="${iterArray}">
+        <extensionElements></extensionElements>
+      </multiInstanceLoopCharacteristics>
+    </callActivity>
+    <startEvent id="startnoneevent1" flowable:async="true" flowable:asyncLeave="true" flowable:initiator="initiator" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <design:stencilid><![CDATA[StartNoneEvent]]></design:stencilid>
+      </extensionElements>
+    </startEvent>
+    <endEvent id="EndNoneEvent_3">
+      <extensionElements>
+        <design:stencilid><![CDATA[EndNoneEvent]]></design:stencilid>
+      </extensionElements>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_4" sourceRef="VariableActivity_3" targetRef="ScriptTask_4">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_5" sourceRef="SendEventTask_4" targetRef="EndNoneEvent_3">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_6" sourceRef="ScriptTask_4" targetRef="SendEventTask_4">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_2" sourceRef="startnoneevent1" targetRef="VariableActivity_3">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_sendLotsOfMessages">
+    <bpmndi:BPMNPlane bpmnElement="sendLotsOfMessages" id="BPMNPlane_sendLotsOfMessages">
+      <bpmndi:BPMNShape bpmnElement="VariableActivity_3" id="BPMNShape_VariableActivity_3">
+        <omgdc:Bounds height="80.0" width="100.0" x="421.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="SendEventTask_4" id="BPMNShape_SendEventTask_4">
+        <omgdc:Bounds height="80.0" width="100.0" x="885.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ScriptTask_4" id="BPMNShape_ScriptTask_4">
+        <omgdc:Bounds height="80.0" width="100.0" x="657.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="CallActivity_4" id="BPMNShape_CallActivity_4">
+        <omgdc:Bounds height="80.0" width="100.0" x="1071.0" y="626.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startnoneevent1" id="BPMNShape_startnoneevent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="317.0" y="261.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="EndNoneEvent_3" id="BPMNShape_EndNoneEvent_3">
+        <omgdc:Bounds height="28.0" width="28.0" x="1162.0" y="262.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_6" id="BPMNEdge_SequenceFlow_6" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="757.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="885.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_4" id="BPMNEdge_SequenceFlow_4" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="521.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="657.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_5" id="BPMNEdge_SequenceFlow_5" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
+        <omgdi:waypoint x="985.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1162.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_2" id="BPMNEdge_SequenceFlow_2" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="347.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="421.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

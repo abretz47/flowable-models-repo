@@ -1,0 +1,4 @@
+[ {
+  "templateDefinitionKey" : "shippingLabel",
+  "variationContentResource" : "template-file:template-shippingLabel"
+} ]

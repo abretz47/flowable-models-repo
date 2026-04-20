@@ -1,0 +1,145 @@
+{
+  "rows" : [ {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-output" ],
+        "stencilId" : "cloud-output"
+      },
+      "label" : "Shopify Order Number",
+      "labelAlign" : "top",
+      "value" : "<p>{{root.itemsToShip.shopifyOrderNumber}}</p>",
+      "defaultValue" : false,
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show"
+      },
+      "size" : 4,
+      "id" : "output1",
+      "type" : "htmlComponent"
+    }, {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-output" ],
+        "stencilId" : "cloud-output"
+      },
+      "label" : "Ship To City",
+      "labelAlign" : "top",
+      "value" : "<p>{{root.itemsToShip.city}}</p>",
+      "defaultValue" : false,
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show"
+      },
+      "size" : 4,
+      "id" : "output2",
+      "type" : "htmlComponent"
+    }, {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-output" ],
+        "stencilId" : "cloud-output"
+      },
+      "label" : "Ship To State",
+      "labelAlign" : "top",
+      "value" : "<p>{{root.itemsToShip.state}}</p>",
+      "defaultValue" : false,
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show"
+      },
+      "size" : 4,
+      "id" : "output3",
+      "type" : "htmlComponent"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-output" ],
+        "stencilId" : "cloud-output"
+      },
+      "label" : "Items Shipped?",
+      "labelAlign" : "top",
+      "value" : "<p>{{root.shipped}}</p>",
+      "defaultValue" : false,
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show"
+      },
+      "size" : 12,
+      "id" : "output4",
+      "type" : "htmlComponent"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-datatable" ],
+        "stencilId" : "cloud-datatable"
+      },
+      "label" : "Items to Ship",
+      "enabled" : true,
+      "extraSettings" : {
+        "dataSource" : "Static",
+        "items" : "{{root.itemsToShip.items}}",
+        "storage" : "Full",
+        "linkTarget" : "_blank",
+        "validationPanelDisplay" : "show",
+        "infiniteScroll" : true,
+        "showTotalRecords" : false,
+        "columns" : [ {
+          "label" : "Item",
+          "accessor" : "name",
+          "filterable" : false,
+          "sortable" : false,
+          "show" : true
+        }, {
+          "label" : "Product ID",
+          "accessor" : "product_id",
+          "filterable" : false,
+          "sortable" : false,
+          "show" : true
+        }, {
+          "label" : "Order Quantity",
+          "accessor" : "quantity",
+          "filterable" : false,
+          "sortable" : false,
+          "show" : true
+        } ],
+        "sortableColumns" : false,
+        "showExportButton" : false,
+        "showFavoriteButton" : true,
+        "nodataPosition" : "middle-center",
+        "response" : { },
+        "dataPollingOnInit" : false,
+        "sortable" : false,
+        "filterable" : false
+      },
+      "labelAlign" : "top",
+      "value" : "{{itemsToShip}}",
+      "ignore" : false,
+      "visible" : true,
+      "isRequired" : false,
+      "size" : 12,
+      "id" : "datatable1",
+      "type" : "dataTable"
+    } ]
+  } ],
+  "metadata" : {
+    "key" : "orderSummary",
+    "name" : "Order Summary",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "form",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-work-form-palette"
+  }
+}

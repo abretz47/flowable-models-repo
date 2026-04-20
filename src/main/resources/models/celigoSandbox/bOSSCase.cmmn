@@ -1,0 +1,604 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/cmmn" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:design="http://flowable.org/design" targetNamespace="http://flowable.org/cmmn" design:palette="flowable-work-case-palette">
+  <case id="bOSSCase" name="BOSS Case" flowable:initiatorVariableName="initiator" flowable:candidateStarterGroups="flowableUser">
+    <documentation>Some words about what this does</documentation>
+    <casePlanModel id="onecaseplanmodel1" name="Case plan model" flowable:formFieldValidation="false" autoComplete="true">
+      <extensionElements>
+        <flowable:custom-view-element customViewKey="orderDetails" permissionGroups="flowableUser" menuNavigationSize="expanded"></flowable:custom-view-element>
+        <flowable:default-menu-navigation-size><![CDATA[expanded]]></flowable:default-menu-navigation-size>
+        <flowable:header-config><![CDATA[md]]></flowable:header-config>
+        <flowable:owner><![CDATA[admin]]></flowable:owner>
+        <flowable:assignee><![CDATA[${"aaron.bretz"}]]></flowable:assignee>
+        <flowable:caseInstanceName><![CDATA[Shopify Order Fulfillment]]></flowable:caseInstanceName>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <design:stencilid><![CDATA[CasePlanModel]]></design:stencilid>
+      </extensionElements>
+      <planItem id="planItemcmmnStage_5" name="Fulillment" definitionRef="cmmnStage_5">
+        <entryCriterion id="cmmnEntrySentry_7" sentryRef="sentrycmmnEntrySentry_7"></entryCriterion>
+        <exitCriterion id="cmmnExitSentry_28" sentryRef="sentrycmmnExitSentry_28"></exitCriterion>
+        <exitCriterion id="cmmnExitSentry_29" sentryRef="sentrycmmnExitSentry_29"></exitCriterion>
+      </planItem>
+      <planItem id="planItemcmmnStage_33" name="Determine Shipping Location" definitionRef="cmmnStage_33">
+        <entryCriterion id="cmmnEntrySentry_30" sentryRef="sentrycmmnEntrySentry_30"></entryCriterion>
+        <exitCriterion id="cmmnExitSentry_34" sentryRef="sentrycmmnExitSentry_34"></exitCriterion>
+      </planItem>
+      <planItem id="planItemcmmnStage_28" name="Fulfill Remaining Items" definitionRef="cmmnStage_28">
+        <entryCriterion id="cmmnEntrySentry_29" sentryRef="sentrycmmnEntrySentry_29"></entryCriterion>
+      </planItem>
+      <planItem id="planItemcmmnStage_52" name="Update Inventory" definitionRef="cmmnStage_52"></planItem>
+      <planItem id="planItemcmmnTask_23" name="Order Dashboard" definitionRef="cmmnTask_23">
+        <itemControl>
+          <extensionElements>
+            <flowable:parentCompletionRule type="ignore"></flowable:parentCompletionRule>
+            <flowable:reactivationRule defaultCondition="true"></flowable:reactivationRule>
+          </extensionElements>
+        </itemControl>
+      </planItem>
+      <planItem id="planItemcmmnTask_26" name="Initialize variables" definitionRef="cmmnTask_26"></planItem>
+      <planItem id="planItemcmmnTask_27" name="Parse JSON" definitionRef="cmmnTask_27">
+        <entryCriterion id="cmmnEntrySentry_28" sentryRef="sentrycmmnEntrySentry_28"></entryCriterion>
+      </planItem>
+      <sentry id="sentrycmmnEntrySentry_7">
+        <extensionElements>
+          <flowable:condition group="true" match="all" targetAttribute="condition">
+            <flowable:condition sourceVariableType="variable" sourceName="isExpedited" operator="equals" targetVariableType="value" targetValue="true" targetType="boolean"></flowable:condition>
+          </flowable:condition>
+          <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+        </extensionElements>
+        <ifPart id="sentryIfPart_cmmnEntrySentry_7">
+          <condition><![CDATA[${vars:equals(isExpedited, true)}]]></condition>
+        </ifPart>
+      </sentry>
+      <sentry id="sentrycmmnExitSentry_28" flowable:triggerMode="onEvent">
+        <extensionElements>
+          <flowable:condition group="true" match="all" targetAttribute="condition">
+            <flowable:condition sourceVariableType="variable" sourceName="shipped" operator="equals" targetVariableType="value" targetValue="true" targetType="boolean"></flowable:condition>
+          </flowable:condition>
+          <design:stencilid><![CDATA[ExitCriterion]]></design:stencilid>
+        </extensionElements>
+        <ifPart id="sentryIfPart_cmmnExitSentry_28">
+          <condition><![CDATA[${vars:equals(shipped, true)}]]></condition>
+        </ifPart>
+      </sentry>
+      <sentry id="sentrycmmnExitSentry_29" flowable:triggerMode="onEvent">
+        <extensionElements>
+          <design:stencilid><![CDATA[ExitCriterion]]></design:stencilid>
+        </extensionElements>
+        <planItemOnPart id="sentryOnPartcmmnExitSentry_29" sourceRef="planItemcmmnTask_15">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+        <ifPart id="sentryIfPart_cmmnExitSentry_29">
+          <condition><![CDATA[${itemsNotShipped.size() > 0}]]></condition>
+        </ifPart>
+      </sentry>
+      <sentry id="sentrycmmnEntrySentry_30" flowable:triggerMode="onEvent">
+        <extensionElements>
+          <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+        </extensionElements>
+        <planItemOnPart id="sentryOnPartcmmnEntrySentry_30" sourceRef="planItemcmmnTask_27">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+      </sentry>
+      <sentry id="sentrycmmnExitSentry_34" flowable:triggerMode="onEvent">
+        <extensionElements>
+          <design:stencilid><![CDATA[ExitCriterion]]></design:stencilid>
+        </extensionElements>
+        <planItemOnPart id="sentryOnPartcmmnExitSentry_34" sourceRef="planItemcmmnTask_2">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+        <ifPart id="sentryIfPart_cmmnExitSentry_34">
+          <condition><![CDATA[${locations.size() == 1}]]></condition>
+        </ifPart>
+      </sentry>
+      <sentry id="sentrycmmnEntrySentry_29">
+        <extensionElements>
+          <flowable:condition group="true" match="all" targetAttribute="condition">
+            <flowable:condition sourceVariableType="variable" sourceName="itemsNotShipped" operator="vars:exists"></flowable:condition>
+          </flowable:condition>
+          <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+        </extensionElements>
+        <ifPart id="sentryIfPart_cmmnEntrySentry_29">
+          <condition><![CDATA[${vars:exists(itemsNotShipped)}]]></condition>
+        </ifPart>
+      </sentry>
+      <sentry id="sentrycmmnEntrySentry_28">
+        <extensionElements>
+          <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+        </extensionElements>
+        <planItemOnPart id="sentryOnPartcmmnEntrySentry_28" sourceRef="planItemcmmnTask_26">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+      </sentry>
+      <stage id="cmmnStage_5" name="Fulillment" flowable:displayOrder="1">
+        <extensionElements>
+          <design:stencilid><![CDATA[ExpandedStage]]></design:stencilid>
+        </extensionElements>
+        <planItem id="planItemcmmnTask_15" name="Store  Shipment" definitionRef="cmmnTask_15">
+          <entryCriterion id="cmmnEntrySentry_16" sentryRef="sentrycmmnEntrySentry_16"></entryCriterion>
+        </planItem>
+        <planItem id="planItemcmmnTask_17" name="Order Preparation" definitionRef="cmmnTask_17">
+          <entryCriterion id="cmmnEntrySentry_44" sentryRef="sentrycmmnEntrySentry_44"></entryCriterion>
+          <entryCriterion id="cmmnEntrySentry_43" sentryRef="sentrycmmnEntrySentry_43"></entryCriterion>
+        </planItem>
+        <planItem id="planItemcmmnTask_43" name="Warehouse Shipment" definitionRef="cmmnTask_43">
+          <entryCriterion id="cmmnEntrySentry_15" sentryRef="sentrycmmnEntrySentry_15"></entryCriterion>
+        </planItem>
+        <sentry id="sentrycmmnEntrySentry_16" flowable:triggerMode="onEvent">
+          <extensionElements>
+            <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+          </extensionElements>
+          <planItemOnPart id="sentryOnPartcmmnEntrySentry_16" sourceRef="planItemcmmnTask_17">
+            <standardEvent>complete</standardEvent>
+          </planItemOnPart>
+          <ifPart id="sentryIfPart_cmmnEntrySentry_16">
+            <condition><![CDATA[${isStoreFulfillment}]]></condition>
+          </ifPart>
+        </sentry>
+        <sentry id="sentrycmmnEntrySentry_44">
+          <extensionElements>
+            <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+          </extensionElements>
+          <ifPart id="sentryIfPart_cmmnEntrySentry_44">
+            <condition><![CDATA[${fulfillmentRejected}]]></condition>
+          </ifPart>
+        </sentry>
+        <sentry id="sentrycmmnEntrySentry_43">
+          <extensionElements>
+            <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+          </extensionElements>
+          <ifPart id="sentryIfPart_cmmnEntrySentry_43">
+            <condition><![CDATA[${locations.toString() != '[]'}]]></condition>
+          </ifPart>
+        </sentry>
+        <sentry id="sentrycmmnEntrySentry_15" flowable:triggerMode="onEvent">
+          <extensionElements>
+            <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+          </extensionElements>
+          <planItemOnPart id="sentryOnPartcmmnEntrySentry_15" sourceRef="planItemcmmnTask_17">
+            <standardEvent>complete</standardEvent>
+          </planItemOnPart>
+          <ifPart id="sentryIfPart_cmmnEntrySentry_15">
+            <condition><![CDATA[${!isStoreFulfillment}]]></condition>
+          </ifPart>
+        </sentry>
+        <processTask id="cmmnTask_15" name="Store  Shipment" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+          <extensionElements>
+            <design:stencilid><![CDATA[ProcessTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+            <flowable:in source="itemsToShip" target="items"></flowable:in>
+            <flowable:in source="shipped" target="shipped"></flowable:in>
+            <flowable:in sourceExpression="${locations[0]}" target="location"></flowable:in>
+          </extensionElements>
+          <processRefExpression><![CDATA[bOSSProcessStoreShipment]]></processRefExpression>
+        </processTask>
+        <processTask id="cmmnTask_17" name="Order Preparation" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+          <extensionElements>
+            <design:stencilid><![CDATA[ProcessTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+            <flowable:in source="locations[0]" target="location"></flowable:in>
+          </extensionElements>
+          <processRefExpression><![CDATA[bOSSOrderPreparation]]></processRefExpression>
+        </processTask>
+        <processTask id="cmmnTask_43" name="Warehouse Shipment" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+          <extensionElements>
+            <design:stencilid><![CDATA[ProcessTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+          </extensionElements>
+          <processRefExpression><![CDATA[routeFulfillmentToWarehouse]]></processRefExpression>
+        </processTask>
+      </stage>
+      <stage id="cmmnStage_33" name="Determine Shipping Location" flowable:displayOrder="0">
+        <extensionElements>
+          <design:stencilid><![CDATA[ExpandedStage]]></design:stencilid>
+        </extensionElements>
+        <planItem id="planItemcmmnTask_2" name="Expedited Shipping Test" definitionRef="cmmnTask_2">
+          <entryCriterion id="cmmnEntrySentry_3" sentryRef="sentrycmmnEntrySentry_3"></entryCriterion>
+        </planItem>
+        <planItem id="planItemcmmnTask_31" name="Select Location" definitionRef="cmmnTask_31">
+          <entryCriterion id="cmmnEntrySentry_40" sentryRef="sentrycmmnEntrySentry_40"></entryCriterion>
+        </planItem>
+        <planItem id="planItemcmmnTask_34" name="Get Inventory Locations" definitionRef="cmmnTask_34"></planItem>
+        <planItem id="planItemcmmnTask_40" name="Add Location Items" definitionRef="cmmnTask_40">
+          <entryCriterion id="cmmnEntrySentry_42" sentryRef="sentrycmmnEntrySentry_42"></entryCriterion>
+        </planItem>
+        <sentry id="sentrycmmnEntrySentry_3">
+          <extensionElements>
+            <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+          </extensionElements>
+          <planItemOnPart id="sentryOnPartcmmnEntrySentry_3" sourceRef="planItemcmmnTask_31">
+            <standardEvent>complete</standardEvent>
+          </planItemOnPart>
+        </sentry>
+        <sentry id="sentrycmmnEntrySentry_40">
+          <extensionElements>
+            <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+          </extensionElements>
+          <planItemOnPart id="sentryOnPartcmmnEntrySentry_40" sourceRef="planItemcmmnTask_40">
+            <standardEvent>complete</standardEvent>
+          </planItemOnPart>
+        </sentry>
+        <sentry id="sentrycmmnEntrySentry_42">
+          <extensionElements>
+            <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+          </extensionElements>
+          <ifPart id="sentryIfPart_cmmnEntrySentry_42">
+            <condition><![CDATA[${locations.toString() != '[]'}]]></condition>
+          </ifPart>
+        </sentry>
+        <processTask id="cmmnTask_2" name="Expedited Shipping Test" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+          <extensionElements>
+            <design:stencilid><![CDATA[ProcessTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+            <flowable:out source="isExpedited" target="isExpedited"></flowable:out>
+          </extensionElements>
+          <processRefExpression><![CDATA[checkExpeditedShipping1]]></processRefExpression>
+        </processTask>
+        <task id="cmmnTask_31" name="Select Location" flowable:type="java" flowable:delegateExpression="${serviceRegistryService}">
+          <extensionElements>
+            <flowable:serviceTaskType><![CDATA[service-registry]]></flowable:serviceTaskType>
+            <flowable:serviceMapping serviceModelKey="getLocationsFromCeligo" operationKey="selectLocation"></flowable:serviceMapping>
+            <flowable:inputParameter name="itemId" value="${itemsToShip.items[0].product_id}"></flowable:inputParameter>
+            <flowable:inputParameter name="locationID" value="${locations[0].location_id}"></flowable:inputParameter>
+            <flowable:inputParameter name="caseInstanceID" value="${root.id}"></flowable:inputParameter>
+            <design:stencilid><![CDATA[ServiceRegistryTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+          </extensionElements>
+        </task>
+        <task id="cmmnTask_34" name="Get Inventory Locations" flowable:type="java" flowable:delegateExpression="${serviceRegistryService}">
+          <extensionElements>
+            <flowable:serviceTaskType><![CDATA[service-registry]]></flowable:serviceTaskType>
+            <flowable:serviceMapping serviceModelKey="getLocationsFromCeligo" operationKey="getLocations"></flowable:serviceMapping>
+            <flowable:inputParameter name="itemId" value="${itemsToShip.items[0].product_id}"></flowable:inputParameter>
+            <flowable:inputParameter name="caseInstanceId" value="${root.id}"></flowable:inputParameter>
+            <design:stencilid><![CDATA[ServiceRegistryTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+          </extensionElements>
+        </task>
+        <task id="cmmnTask_40" name="Add Location Items" flowable:asyncLeave="true" flowable:asyncLeaveExclusive="true" flowable:type="script" flowable:scriptFormat="javascript">
+          <extensionElements>
+            <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+            <flowable:field name="script">
+              <flowable:string><![CDATA[var jsonString = planItemInstance.getVariable("locations");
+var json = flw.json.stringToJson(jsonString);
+java.lang.System.out.println("*********************");
+java.lang.System.out.println("*********************");
+java.lang.System.out.println("*********************");
+java.lang.System.out.println("*********************");
+java.lang.System.out.println("*********************");
+var obj = flw.json.createArray().get();
+java.lang.System.out.println(obj.getClass());
+for(i=0; i<json.size(); i++) {
+  obj.addPOJO(json.path(i).get());
+  java.lang.System.out.println(obj.toString());
+}
+java.lang.System.out.println(obj.getClass());
+planItemInstance.setVariable("locations", obj);
+java.lang.System.out.println(planItemInstance.getVariable("locations").toString());
+java.lang.System.out.println(planItemInstance.getVariable("locations").getClass());]]></flowable:string>
+            </flowable:field>
+          </extensionElements>
+        </task>
+      </stage>
+      <stage id="cmmnStage_28" name="Fulfill Remaining Items" flowable:displayOrder="2">
+        <extensionElements>
+          <design:stencilid><![CDATA[ExpandedStage]]></design:stencilid>
+        </extensionElements>
+        <planItem id="planItemcmmnTask_24" name="Ship Partial Fullfilment" definitionRef="cmmnTask_24">
+          <itemControl>
+            <repetitionRule flowable:counterVariable="repetitionCounter" flowable:maxInstanceCount="1" flowable:collectionVariable="${itemsNotShipped}" flowable:elementVariable="item" flowable:elementIndexVariable="itemCounter">
+              <extensionElements></extensionElements>
+            </repetitionRule>
+          </itemControl>
+        </planItem>
+        <processTask id="cmmnTask_24" name="Ship Partial Fullfilment" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+          <extensionElements>
+            <design:stencilid><![CDATA[ProcessTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+          </extensionElements>
+          <processRefExpression><![CDATA[bOSSPartialFulfillment]]></processRefExpression>
+        </processTask>
+      </stage>
+      <stage id="cmmnStage_52" name="Update Inventory" flowable:includeInStageOverview="false">
+        <extensionElements>
+          <design:stencilid><![CDATA[ExpandedStage]]></design:stencilid>
+        </extensionElements>
+        <planItem id="planItemcmmnTask_50" name="Update Inventory" definitionRef="cmmnTask_50">
+          <entryCriterion id="cmmnEntrySentry_52" sentryRef="sentrycmmnEntrySentry_52"></entryCriterion>
+        </planItem>
+        <sentry id="sentrycmmnEntrySentry_52">
+          <extensionElements>
+            <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+          </extensionElements>
+          <ifPart id="sentryIfPart_cmmnEntrySentry_52">
+            <condition><![CDATA[${root.shipped == true}]]></condition>
+          </ifPart>
+        </sentry>
+        <processTask id="cmmnTask_50" name="Update Inventory" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+          <extensionElements>
+            <design:stencilid><![CDATA[ProcessTask]]></design:stencilid>
+            <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+            <flowable:in source="itemsToShip" target="itemsToShip"></flowable:in>
+            <flowable:in source="referenceNumber" target="referenceNumber"></flowable:in>
+            <flowable:in source="locations" target="locations"></flowable:in>
+          </extensionElements>
+          <processRefExpression><![CDATA[updateInventory]]></processRefExpression>
+        </processTask>
+      </stage>
+      <task id="cmmnTask_23" name="Order Dashboard" flowable:type="casePage" flowable:formKey="orderSummary" flowable:owner="admin" flowable:candidateGroups="flowableUser">
+        <extensionElements>
+          <flowable:state-rendering available="readOnly" active="fullAccess" completed="readOnly" terminated="readOnly"></flowable:state-rendering>
+          <design:stencilid><![CDATA[CasePageTask]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+          <design:impactparentcompletion><![CDATA[ignore]]></design:impactparentcompletion>
+        </extensionElements>
+      </task>
+      <task id="cmmnTask_26" name="Initialize variables" flowable:type="java" flowable:delegateExpression="${initVariablesService}">
+        <extensionElements>
+          <flowable:overwrite><![CDATA[true]]></flowable:overwrite>
+          <flowable:variableMapping target="root" name="shipped" valueType="boolean" value="false"></flowable:variableMapping>
+          <flowable:variableMapping target="root" name="isStoreFulfillment" valueType="boolean"></flowable:variableMapping>
+          <flowable:variableMapping target="root" name="fulfillmentRejected" valueType="boolean" value="true"></flowable:variableMapping>
+          <flowable:variableMapping target="root" name="itemsToShip" valueType="jsonObject"></flowable:variableMapping>
+          <flowable:variableMapping target="root" name="locations" valueType="jsonArray"></flowable:variableMapping>
+          <design:stencilid><![CDATA[VariableActivity]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+        </extensionElements>
+      </task>
+      <task id="cmmnTask_27" name="Parse JSON" flowable:asyncLeave="true" flowable:asyncLeaveExclusive="true" flowable:type="script" flowable:scriptFormat="javascript">
+        <extensionElements>
+          <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+          <flowable:field name="script">
+            <flowable:string><![CDATA[var jsonBody = '{\"id\":5537547256122,\"admin_graphql_api_id\":\"gid://shopify/Order/5537547256122\",\"app_id\":1354745,\"browser_ip\":\"49.205.250.16\",\"buyer_accepts_marketing\":false,\"cancel_reason\":null,\"cancelled_at\":null,\"cart_token\":null,\"checkout_id\":37099528356154,\"checkout_token\":\"8afabbefc3b67d0c1e71a9c68e33de6c\",\"client_details\":{\"accept_language\":null,\"browser_height\":null,\"browser_ip\":\"49.205.250.16\",\"browser_width\":null,\"session_hash\":null,\"user_agent\":\"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36\"},\"closed_at\":null,\"company\":null,\"confirmed\":true,\"contact_email\":\"shashankreddy.samala@celigo.com\",\"created_at\":\"2023-10-18T10:03:44-04:00\",\"currency\":\"USD\",\"current_subtotal_price\":\"221.00\",\"current_subtotal_price_set\":{\"shop_money\":{\"amount\":\"221.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"221.00\",\"currency_code\":\"USD\"}},\"current_total_additional_fees_set\":null,\"current_total_discounts\":\"0.00\",\"current_total_discounts_set\":{\"shop_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"}},\"current_total_duties_set\":null,\"current_total_price\":\"253.05\",\"current_total_price_set\":{\"shop_money\":{\"amount\":\"253.05\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"253.05\",\"currency_code\":\"USD\"}},\"current_total_tax\":\"32.05\",\"current_total_tax_set\":{\"shop_money\":{\"amount\":\"32.05\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"32.05\",\"currency_code\":\"USD\"}},\"customer_locale\":\"en-US\",\"device_id\":null,\"discount_codes\":[],\"email\":\"shashankreddy.samala@celigo.com\",\"estimated_taxes\":false,\"financial_status\":\"paid\",\"fulfillment_status\":null,\"landing_site\":null,\"landing_site_ref\":null,\"location_id\":null,\"merchant_of_record_app_id\":null,\"name\":\"#1561\",\"note\":null,\"note_attributes\":[],\"number\":561,\"order_number\":1561,\"order_status_url\":\"https://celigo-pos-plus-test.myshopify.com/76432245050/orders/cf374d7079ec050e6f195ed55016ac0b/authenticate?key=654b74bd17c62f30b793934271386333\",\"original_total_additional_fees_set\":null,\"original_total_duties_set\":null,\"payment_gateway_names\":[\"Cash on Delivery (COD)\"],\"phone\":null,\"presentment_currency\":\"USD\",\"processed_at\":\"2023-10-18T10:03:44-04:00\",\"reference\":\"d0ca9b36888e88eda5015891b823b6d6\",\"referring_site\":null,\"source_identifier\":\"d0ca9b36888e88eda5015891b823b6d6\",\"source_name\":\"shopify_draft_order\",\"source_url\":null,\"subtotal_price\":\"221.00\",\"subtotal_price_set\":{\"shop_money\":{\"amount\":\"221.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"221.00\",\"currency_code\":\"USD\"}},\"tags\":\"\",\"tax_lines\":[{\"price\":\"18.79\",\"rate\":0.085,\"title\":\"Federal Tax\",\"price_set\":{\"shop_money\":{\"amount\":\"18.79\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"18.79\",\"currency_code\":\"USD\"}},\"channel_liable\":false},{\"price\":\"13.26\",\"rate\":0.06,\"title\":\"State Tax\",\"price_set\":{\"shop_money\":{\"amount\":\"13.26\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"13.26\",\"currency_code\":\"USD\"}},\"channel_liable\":false}],\"taxes_included\":false,\"test\":false,\"token\":\"cf374d7079ec050e6f195ed55016ac0b\",\"total_discounts\":\"0.00\",\"total_discounts_set\":{\"shop_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"}},\"total_line_items_price\":\"221.00\",\"total_line_items_price_set\":{\"shop_money\":{\"amount\":\"221.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"221.00\",\"currency_code\":\"USD\"}},\"total_outstanding\":\"0.00\",\"total_price\":\"253.05\",\"total_price_set\":{\"shop_money\":{\"amount\":\"253.05\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"253.05\",\"currency_code\":\"USD\"}},\"total_shipping_price_set\":{\"shop_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"}},\"total_tax\":\"32.05\",\"total_tax_set\":{\"shop_money\":{\"amount\":\"32.05\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"32.05\",\"currency_code\":\"USD\"}},\"total_tip_received\":\"0.00\",\"total_weight\":0,\"updated_at\":\"2023-10-18T10:03:46-04:00\",\"user_id\":98813935930,\"billing_address\":{\"first_name\":\"Shashank\",\"address1\":\"Pasadena City College\",\"phone\":null,\"city\":\"Pasadena\",\"zip\":\"91106\",\"province\":\"California\",\"country\":\"United States\",\"last_name\":\"POS\",\"address2\":null,\"company\":null,\"latitude\":34.1439322,\"longitude\":-118.1186338,\"name\":\"Shashank POS\",\"country_code\":\"US\",\"province_code\":\"CA\"},\"customer\":{\"id\":7362775941434,\"email\":\"shashankreddy.samala@celigo.com\",\"accepts_marketing\":false,\"created_at\":\"2023-09-08T04:05:55-04:00\",\"updated_at\":\"2023-10-18T10:03:45-04:00\",\"first_name\":\"Shashank\",\"last_name\":\"POS\",\"state\":\"disabled\",\"note\":null,\"verified_email\":true,\"multipass_identifier\":null,\"tax_exempt\":false,\"phone\":null,\"email_marketing_consent\":{\"state\":\"not_subscribed\",\"opt_in_level\":\"single_opt_in\",\"consent_updated_at\":null},\"sms_marketing_consent\":null,\"tags\":\"\",\"currency\":\"USD\",\"accepts_marketing_updated_at\":\"2023-09-08T04:05:55-04:00\",\"marketing_opt_in_level\":null,\"tax_exemptions\":[],\"admin_graphql_api_id\":\"gid://shopify/Customer/7362775941434\",\"default_address\":{\"id\":9427722567994,\"customer_id\":7362775941434,\"first_name\":\"Shashank\",\"last_name\":\"POS\",\"company\":null,\"address1\":\"Pasadena City College\",\"address2\":null,\"city\":\"Pasadena\",\"province\":\"California\",\"country\":\"United States\",\"zip\":\"91106\",\"phone\":null,\"name\":\"Shashank POS\",\"province_code\":\"CA\",\"country_code\":\"US\",\"country_name\":\"United States\",\"default\":true}},\"discount_applications\":[],\"fulfillments\":[],\"line_items\":[{\"id\":14178724249914,\"admin_graphql_api_id\":\"gid://shopify/LineItem/14178724249914\",\"fulfillable_quantity\":1,\"fulfillment_service\":\"manual\",\"fulfillment_status\":null,\"gift_card\":false,\"grams\":0,\"name\":\"Testautomation1\",\"pre_tax_price\":\"100.00\",\"pre_tax_price_set\":{\"shop_money\":{\"amount\":\"100.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"100.00\",\"currency_code\":\"USD\"}},\"price\":\"100.00\",\"price_set\":{\"shop_money\":{\"amount\":\"100.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"100.00\",\"currency_code\":\"USD\"}},\"product_exists\":true,\"product_id\":8303998402874,\"properties\":[],\"quantity\":1,\"requires_shipping\":true,\"sku\":\"Testautomation1\",\"taxable\":true,\"title\":\"Testautomation1\",\"total_discount\":\"0.00\",\"total_discount_set\":{\"shop_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"}},\"variant_id\":45191294845242,\"variant_inventory_management\":\"shopify\",\"variant_title\":null,\"vendor\":\"celigo-pos-plus-test\",\"tax_lines\":[{\"channel_liable\":false,\"price\":\"8.50\",\"price_set\":{\"shop_money\":{\"amount\":\"8.50\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"8.50\",\"currency_code\":\"USD\"}},\"rate\":0.085,\"title\":\"Federal Tax\"},{\"channel_liable\":false,\"price\":\"6.00\",\"price_set\":{\"shop_money\":{\"amount\":\"6.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"6.00\",\"currency_code\":\"USD\"}},\"rate\":0.06,\"title\":\"State Tax\"}],\"duties\":[],\"discount_allocations\":[]},{\"id\":14178724282682,\"admin_graphql_api_id\":\"gid://shopify/LineItem/14178724282682\",\"fulfillable_quantity\":1,\"fulfillment_service\":\"manual\",\"fulfillment_status\":null,\"gift_card\":false,\"grams\":0,\"name\":\"Testautomation3\",\"pre_tax_price\":\"99.00\",\"pre_tax_price_set\":{\"shop_money\":{\"amount\":\"99.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"99.00\",\"currency_code\":\"USD\"}},\"price\":\"99.00\",\"price_set\":{\"shop_money\":{\"amount\":\"99.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"99.00\",\"currency_code\":\"USD\"}},\"product_exists\":true,\"product_id\":8309772878138,\"properties\":[],\"quantity\":1,\"requires_shipping\":true,\"sku\":\"Testautomation3\",\"taxable\":true,\"title\":\"Testautomation3\",\"total_discount\":\"0.00\",\"total_discount_set\":{\"shop_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"}},\"variant_id\":45223306821946,\"variant_inventory_management\":\"shopify\",\"variant_title\":null,\"vendor\":\"celigo-pos-plus-test\",\"tax_lines\":[{\"channel_liable\":false,\"price\":\"8.42\",\"price_set\":{\"shop_money\":{\"amount\":\"8.42\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"8.42\",\"currency_code\":\"USD\"}},\"rate\":0.085,\"title\":\"Federal Tax\"},{\"channel_liable\":false,\"price\":\"5.94\",\"price_set\":{\"shop_money\":{\"amount\":\"5.94\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"5.94\",\"currency_code\":\"USD\"}},\"rate\":0.06,\"title\":\"State Tax\"}],\"duties\":[],\"discount_allocations\":[]},{\"id\":14178724315450,\"admin_graphql_api_id\":\"gid://shopify/LineItem/14178724315450\",\"fulfillable_quantity\":1,\"fulfillment_service\":\"manual\",\"fulfillment_status\":null,\"gift_card\":false,\"grams\":0,\"name\":\"Testautomation4\",\"pre_tax_price\":\"22.00\",\"pre_tax_price_set\":{\"shop_money\":{\"amount\":\"22.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"22.00\",\"currency_code\":\"USD\"}},\"price\":\"22.00\",\"price_set\":{\"shop_money\":{\"amount\":\"22.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"22.00\",\"currency_code\":\"USD\"}},\"product_exists\":true,\"product_id\":8309774057786,\"properties\":[],\"quantity\":1,\"requires_shipping\":true,\"sku\":\"Testautomation4\",\"taxable\":true,\"title\":\"Testautomation4\",\"total_discount\":\"0.00\",\"total_discount_set\":{\"shop_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"0.00\",\"currency_code\":\"USD\"}},\"variant_id\":45223310393658,\"variant_inventory_management\":\"shopify\",\"variant_title\":null,\"vendor\":\"celigo-pos-plus-test\",\"tax_lines\":[{\"channel_liable\":false,\"price\":\"1.87\",\"price_set\":{\"shop_money\":{\"amount\":\"1.87\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"1.87\",\"currency_code\":\"USD\"}},\"rate\":0.085,\"title\":\"Federal Tax\"},{\"channel_liable\":false,\"price\":\"1.32\",\"price_set\":{\"shop_money\":{\"amount\":\"1.32\",\"currency_code\":\"USD\"},\"presentment_money\":{\"amount\":\"1.32\",\"currency_code\":\"USD\"}},\"rate\":0.06,\"title\":\"State Tax\"}],\"duties\":[],\"discount_allocations\":[]}],\"payment_terms\":null,\"refunds\":[],\"shipping_address\":{\"first_name\":\"Shashank\",\"address1\":\"Pasadena City College\",\"phone\":null,\"city\":\"Pasadena\",\"zip\":\"91106\",\"province\":\"California\",\"country\":\"United States\",\"last_name\":\"POS\",\"address2\":null,\"company\":null,\"latitude\":null,\"longitude\":null,\"name\":\"Shashank POS\",\"country_code\":\"US\",\"province_code\":\"CA\"},\"shipping_lines\":[]}'
+var json = JSON.parse(jsonBody);
+var shopifyOrderString = planItemInstance.getVariable("ShopifyOrder");
+//var shopifyOrderJson = flw.json.stringToJson(shopifyOrderString).get().get("Order_metaData").get(0);
+var shopifyOrderJson = JSON.parse(shopifyOrderString);
+java.lang.System.out.println("*********************");
+java.lang.System.out.println("*********************");
+java.lang.System.out.println("*********************");
+java.lang.System.out.println("*********************");
+java.lang.System.out.println("*********************");
+
+shopifyOrderJson = shopifyOrderJson.Order_metaData[0];
+// java.lang.System.out.println(flw.json.jsonToSting(planItemInstance.getVariable("itemsToShip")));
+
+//var itemsToShip = { id: json["id"], salesAmount: Number(json["current_total_price"]), shopifyStoreId: json["app_id"], shopifyStoreName: json["Shopify Store"], orderNumber: json[order_number], address: json["shipping_address.address1"], city: json["shipping_address.city"], state: json["shipping_address.province_code"], zip: json["shipping_address.zip"], shippingName: json["shipping_address.name"]};
+//planItemInstance.getVariable("itemsToShip").put("id",json["id"]).put("salesAmount", Number(json["current_total_price"])).put("shopifyOrderNumber", json["order_number"]).put("shopifyStoreId",json["app_id"]).put("shopifyStoreName",json["name"]).put("address",json["shipping_address"].address1).put("city",json["shipping_address"].city).put("state", json["shipping_address"].province_code).put("zip",json["shipping_address"].zip);
+//planItemInstance.getVariable("itemsToShip").put("id",json.id).put("salesAmount", Number(json.current_total_price)).put("shopifyOrderNumber", json.order_number).put("shopifyStoreId",json.app_id).put("shopifyStoreName",json.name).put("address",json.shipping_address.address1).put("city",json.shipping_address.city).put("state", json.shipping_address.province_code).put("zip",json.shipping_address.zip);
+planItemInstance.getVariable("itemsToShip").put("id",shopifyOrderJson.id).put("salesAmount", Number(shopifyOrderJson.current_total_price)).put("shopifyOrderNumber", shopifyOrderJson.order_number).put("shopifyStoreId",shopifyOrderJson.app_id).put("shopifyStoreName",shopifyOrderJson.name).put("address",shopifyOrderJson.shipping_address.address1).put("city",shopifyOrderJson.shipping_address.city).put("state", shopifyOrderJson.shipping_address.province_code).put("zip",shopifyOrderJson.shipping_address.zip);
+
+
+//planItemInstance.getVariable("itemsToShip").put("id",shopifyOrderJson.get("id"));
+//.put("salesAmount", Number(shopifyOrderJson.get("current_total_price"))).put("shopifyOrderNumber", shopifyOrderJson.get("order_number")).put("shopifyStoreId",shopifyOrderJson.get("app_id")).put("shopifyStoreName",shopifyOrderJson.get("name")).put("address",shopifyOrderJson.get("shipping_address").get("address1")).put("city",shopifyOrderJson.get("shipping_address").get("city")).put("state", shopifyOrderJson.get("shipping_address").get("province_code")).put("zip",shopifyOrderJson.get("shipping_address").get("zip"));
+
+var lineItems = shopifyOrderJson.line_items;
+//java.lang.System.out.println(JSON.stringify(lineItems["0"]));
+
+//var lineItems = shopifyOrderJson.get("line_items");
+for(var i=0; i<lineItems.length; i++){
+    planItemInstance.getVariable("itemsToShip").withArray("items").addPOJO(lineItems[String(i)]);
+    //planItemInstance.getVariable("itemsToShip").withArray("items").addPOJO(lineItems.get(i));
+}
+
+//planItemInstance.setVariable("ShopifyOrder", shopifyOrderJson);]]></flowable:string>
+          </flowable:field>
+        </extensionElements>
+      </task>
+    </casePlanModel>
+  </case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_bOSSCase">
+      <cmmndi:CMMNShape id="CMMNShape_onecaseplanmodel1" cmmnElementRef="onecaseplanmodel1">
+        <dc:Bounds height="1063.63751064535" width="947.0" x="280.0" y="123.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnStage_5" cmmnElementRef="planItemcmmnStage_5">
+        <dc:Bounds height="288.0069241029364" width="813.0" x="349.32010546132403" y="606.8542516682292"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_7" cmmnElementRef="cmmnEntrySentry_7">
+        <dc:Bounds height="28.0" width="18.0" x="747.656024335855" y="592.8542516682292"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnExitSentry_28" cmmnElementRef="cmmnExitSentry_28">
+        <dc:Bounds height="28.0" width="18.0" x="1153.3201054613241" y="736.3793784839136"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnExitSentry_29" cmmnElementRef="cmmnExitSentry_29">
+        <dc:Bounds height="28.0" width="18.0" x="744.9727364073517" y="880.8611757711656"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_15" cmmnElementRef="planItemcmmnTask_15">
+        <dc:Bounds height="80.0" width="100.0" x="930.1144539933332" y="704.9546674399887"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_16" cmmnElementRef="cmmnEntrySentry_16">
+        <dc:Bounds height="28.0" width="18.0" x="921.1144539933332" y="730.9546674399887"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_17" cmmnElementRef="planItemcmmnTask_17">
+        <dc:Bounds height="80.0" width="100.0" x="712.6449249300081" y="704.9546674399887"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_44" cmmnElementRef="cmmnEntrySentry_44">
+        <dc:Bounds height="28.0" width="18.0" x="784.6449249300081" y="690.9546674399887"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_43" cmmnElementRef="cmmnEntrySentry_43">
+        <dc:Bounds height="28.0" width="18.0" x="726.8774892170527" y="690.9546674399887"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_43" cmmnElementRef="planItemcmmnTask_43">
+        <dc:Bounds height="80.0" width="100.0" x="491.54565731363357" y="704.9546674399887"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_15" cmmnElementRef="cmmnEntrySentry_15">
+        <dc:Bounds height="28.0" width="18.0" x="582.5456573136337" y="730.9546674399887"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnStage_33" cmmnElementRef="planItemcmmnStage_33">
+        <dc:Bounds height="218.0" width="814.0" x="348.82010546132403" y="276.18449173952405"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_30" cmmnElementRef="cmmnEntrySentry_30">
+        <dc:Bounds height="28.0" width="18.0" x="540.1588459989721" y="262.18449173952405"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnExitSentry_34" cmmnElementRef="cmmnExitSentry_34">
+        <dc:Bounds height="28.0" width="18.0" x="747.4339424921053" y="480.18449173952405"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_2" cmmnElementRef="planItemcmmnTask_2">
+        <dc:Bounds height="80.0" width="100.0" x="1011.1189428143679" y="346.2760752003802"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_3" cmmnElementRef="cmmnEntrySentry_3">
+        <dc:Bounds height="28.0" width="18.0" x="1002.1189428143679" y="372.2760752003802"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_31" cmmnElementRef="planItemcmmnTask_31">
+        <dc:Bounds height="80.0" width="100.0" x="836.6914431244826" y="346.2760752003802"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_40" cmmnElementRef="cmmnEntrySentry_40">
+        <dc:Bounds height="28.0" width="18.0" x="827.6914431244826" y="372.2760752003802"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_34" cmmnElementRef="planItemcmmnTask_34">
+        <dc:Bounds height="80.0" width="100.0" x="459.0479164147316" y="346.2760752003802"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_40" cmmnElementRef="planItemcmmnTask_40">
+        <dc:Bounds height="80.0" width="100.0" x="696.205200440832" y="346.2760752003802"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_42" cmmnElementRef="cmmnEntrySentry_42">
+        <dc:Bounds height="28.0" width="18.0" x="687.205200440832" y="372.2760752003802"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnStage_28" cmmnElementRef="planItemcmmnStage_28">
+        <dc:Bounds height="150.0" width="402.0" x="347.78455854330184" y="993.6892453699129"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_29" cmmnElementRef="cmmnEntrySentry_29">
+        <dc:Bounds height="28.0" width="18.0" x="536.1617957470635" y="979.6892453699129"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_24" cmmnElementRef="planItemcmmnTask_24">
+        <dc:Bounds height="80.0" width="100.0" x="498.0419752087215" y="1034.8923696160098"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnStage_52" cmmnElementRef="planItemcmmnStage_52">
+        <dc:Bounds height="150.0" width="290.0" x="872.3201054613241" y="993.6892453699129"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_50" cmmnElementRef="planItemcmmnTask_50">
+        <dc:Bounds height="80.0" width="100.0" x="976.2777732154459" y="1028.689245369913"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_52" cmmnElementRef="cmmnEntrySentry_52">
+        <dc:Bounds height="28.0" width="18.0" x="967.2777732154459" y="1054.689245369913"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_23" cmmnElementRef="planItemcmmnTask_23">
+        <dc:Bounds height="80.0" width="100.0" x="1075.3898937399658" y="152.03125"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_26" cmmnElementRef="planItemcmmnTask_26">
+        <dc:Bounds height="80.0" width="100.0" x="315.7544495806146" y="152.03125"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemcmmnTask_27" cmmnElementRef="planItemcmmnTask_27">
+        <dc:Bounds height="80.0" width="100.0" x="498.78455854330184" y="152.03125"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_cmmnEntrySentry_28" cmmnElementRef="cmmnEntrySentry_28">
+        <dc:Bounds height="28.0" width="18.0" x="489.78455854330184" y="178.03125"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_37" cmmnElementRef="planItemcmmnTask_27" targetCMMNElementRef="cmmnEntrySentry_30">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="548.7845585433018" y="232.03125"></di:waypoint>
+        <di:waypoint x="548.7845585433018" y="247.10787086976202"></di:waypoint>
+        <di:waypoint x="549.1588459989721" y="247.10787086976202"></di:waypoint>
+        <di:waypoint x="549.1588459989721" y="262.18449173952405"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_38" cmmnElementRef="planItemcmmnTask_2" targetCMMNElementRef="cmmnExitSentry_34">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="1061.118942814368" y="426.2760752003802"></di:waypoint>
+        <di:waypoint x="1061.118942814368" y="494.18449173952405"></di:waypoint>
+        <di:waypoint x="765.4339424921053" y="494.18449173952405"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_19" cmmnElementRef="planItemcmmnTask_17" targetCMMNElementRef="cmmnEntrySentry_16">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="812.6449249300081" y="744.9546674399887"></di:waypoint>
+        <di:waypoint x="921.1144539933332" y="744.9546674399887"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_18" cmmnElementRef="planItemcmmnTask_17" targetCMMNElementRef="cmmnEntrySentry_15">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="712.6449249300081" y="744.9546674399887"></di:waypoint>
+        <di:waypoint x="656.5952911218209" y="744.954667439989"></di:waypoint>
+        <di:waypoint x="656.5952911218209" y="744.9546674399887"></di:waypoint>
+        <di:waypoint x="600.5456573136337" y="744.9546674399887"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_29" cmmnElementRef="planItemcmmnTask_26" targetCMMNElementRef="cmmnEntrySentry_28">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="415.7544495806146" y="192.03125"></di:waypoint>
+        <di:waypoint x="489.78455854330184" y="192.03125"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_53" cmmnElementRef="planItemcmmnTask_31" targetCMMNElementRef="cmmnEntrySentry_3">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="936.6914431244826" y="386.2760752003802"></di:waypoint>
+        <di:waypoint x="1002.1189428143679" y="386.2760752003802"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_41" cmmnElementRef="planItemcmmnTask_40" targetCMMNElementRef="cmmnEntrySentry_40">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="796.205200440832" y="386.2760752003802"></di:waypoint>
+        <di:waypoint x="811.9483217826573" y="384.70152015844167"></di:waypoint>
+        <di:waypoint x="811.9483217826573" y="386.2760752003802"></di:waypoint>
+        <di:waypoint x="827.6914431244826" y="386.2760752003802"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+      <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_43" cmmnElementRef="planItemcmmnTask_15" targetCMMNElementRef="cmmnExitSentry_29">
+        <di:extension>
+          <flowable:docker type="source" x="50.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="980.1144539933332" y="784.9546674399887"></di:waypoint>
+        <di:waypoint x="980.1144539933332" y="833.6951991265464"></di:waypoint>
+        <di:waypoint x="753.9727364073517" y="833.6951991265464"></di:waypoint>
+        <di:waypoint x="753.9727364073517" y="880.8611757711656"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</definitions>

@@ -1,0 +1,52 @@
+{
+  "rows" : [ {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "Component" ],
+        "stencilId" : "work-query-data-table"
+      },
+      "label" : "My Data",
+      "labelAlign" : "top",
+      "value" : "{{myData}}",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "dataSource" : "Query",
+        "storage" : "Full",
+        "query" : "query",
+        "sortableColumns" : false,
+        "infiniteScroll" : true,
+        "infiniteScrollVisibleElements" : 10,
+        "showPagination" : false,
+        "autoHidePagination" : true,
+        "clientPagination" : false,
+        "filterable" : false,
+        "sortable" : true,
+        "multiSort" : false,
+        "pageSizeOptions" : [ 5, 10, 20, 25, 50, 100 ],
+        "showTotalRecords" : false,
+        "dataPollingOnInit" : false,
+        "sortAsc" : "asc",
+        "sortDesc" : "desc",
+        "sortPattern" : "sort={{$sortItem.id}}&order={{$sortItem.direction}}",
+        "nodataPosition" : "middle-center",
+        "showFavoriteButton" : true
+      },
+      "size" : 12,
+      "id" : "work-query-data-table1",
+      "type" : "workQueryDataTable"
+    } ]
+  } ],
+  "metadata" : {
+    "key" : "gugu",
+    "name" : "Gugu",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "page",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-work-page-palette"
+  }
+}

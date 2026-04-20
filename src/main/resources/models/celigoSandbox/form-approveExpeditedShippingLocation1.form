@@ -1,0 +1,59 @@
+{
+  "outcomes" : [ {
+    "label" : "Approve",
+    "value" : "approve",
+    "visible" : null,
+    "enabled" : "",
+    "outcomeFormKey" : null,
+    "ignorePayload" : null,
+    "ignoreValidation" : null,
+    "primary" : true,
+    "styleClass" : null,
+    "navigationUrl" : null
+  }, {
+    "label" : "Warehouse Shipment",
+    "value" : "reject",
+    "visible" : null,
+    "enabled" : null,
+    "outcomeFormKey" : null,
+    "ignorePayload" : null,
+    "ignoreValidation" : null,
+    "primary" : null,
+    "styleClass" : null,
+    "navigationUrl" : null
+  } ],
+  "outcomevariablename" : "approve_expedited_shipping",
+  "rows" : [ {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-sub-form" ],
+        "stencilId" : "cloud-sub-form"
+      },
+      "labelAlign" : "top",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "showBorder" : false,
+        "collapsible" : true,
+        "collapsed" : false,
+        "formRef" : "orderSummary"
+      },
+      "size" : 12,
+      "label" : "Item Summary",
+      "id" : "sub-form1",
+      "type" : "subform"
+    } ]
+  } ],
+  "metadata" : {
+    "key" : "approveExpeditedShippingLocation1",
+    "name" : "Approve Expedited Shipping Location",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "form",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-engage-form-palette"
+  }
+}

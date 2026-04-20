@@ -1,0 +1,88 @@
+{
+  "type" : "REST",
+  "operations" : [ {
+    "name" : "Get Available Locations",
+    "key" : "getLocations",
+    "inputParameters" : [ {
+      "displayName" : "Item Id",
+      "name" : "itemId",
+      "type" : "long",
+      "required" : true
+    }, {
+      "displayName" : "Case Instance Id",
+      "name" : "caseInstanceId",
+      "type" : "string",
+      "required" : true
+    } ],
+    "outputParameters" : [ ],
+    "config" : {
+      "method" : "POST",
+      "url" : "/65329ead075f6c1f86ca957d/data"
+    },
+    "type" : "search"
+  }, {
+    "name" : "Select location",
+    "key" : "selectLocation",
+    "inputParameters" : [ {
+      "displayName" : "Item Id",
+      "name" : "itemId",
+      "type" : "long",
+      "required" : true
+    }, {
+      "displayName" : "Location ID",
+      "name" : "locationID",
+      "type" : "long",
+      "required" : true
+    }, {
+      "displayName" : "Case Instance ID",
+      "name" : "caseInstanceID",
+      "type" : "string",
+      "required" : true
+    } ],
+    "outputParameters" : [ ],
+    "config" : {
+      "url" : "/653a0f6ff409fd6b44f50025/data",
+      "method" : "POST"
+    },
+    "type" : "search"
+  }, {
+    "name" : "Update Inventory",
+    "key" : "updateInventory",
+    "inputParameters" : [ {
+      "displayName" : "Inventory Payload",
+      "name" : "inventoryPayload",
+      "type" : "json",
+      "excludedFromBody" : true
+    } ],
+    "outputParameters" : [ ],
+    "config" : {
+      "url" : "/65313aa5dc1b47516ac15b36/data",
+      "method" : "POST",
+      "authorization" : {
+        "basic" : {
+          "username" : "celigo",
+          "password" : "celigo"
+        }
+      },
+      "httpRequestHandler" : {
+        "type" : "script",
+        "implementation" : {
+          "language" : "javascript",
+          "script" : "java.lang.System.out.println(\"*********************\");\njava.lang.System.out.println(\"*********************\");\njava.lang.System.out.println(\"*********************\");\njava.lang.System.out.println(\"*********************\");\njava.lang.System.out.println(\"*********************\");\njava.lang.System.out.println(\"*********************\");\njava.lang.System.out.println(\"*********************\");\njava.lang.System.out.println(flw.getInput(\"inventoryPayload\").toString());\n\nflwHttpRequest.setBody(flw.getInput(\"inventoryPayload\").get())\n\njava.lang.System.out.println(flwHttpRequest.getBody().toString());\n"
+        }
+      }
+    },
+    "type" : "search"
+  } ],
+  "config" : {
+    "baseUrl" : "https://api.integrator.io/v1/exports",
+    "authorization" : {
+      "basic" : {
+        "username" : "Nealz",
+        "password" : "l4BKhYps&a$$QFew"
+      }
+    }
+  },
+  "name" : "Get Locations from Celigo",
+  "key" : "getLocationsFromCeligo"
+}

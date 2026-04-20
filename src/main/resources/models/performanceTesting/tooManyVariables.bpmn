@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:design="http://flowable.org/design" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://flowable.org/test" design:palette="flowable-work-process-palette">
+  <process id="tooManyVariables" name="Too Many Variables" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
+    <extensionElements>
+      <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
+      <design:creationdate><![CDATA[2026-04-17T20:36:09.362Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2026-04-17T20:36:09.362Z]]></design:modificationdate>
+    </extensionElements>
+    <callActivity id="CallActivity_4" name="Generate Payload" calledElement="createBigPayload" flowable:sameDeployment="true" flowable:fallbackToDefaultTenant="true">
+      <extensionElements>
+        <flowable:out source="bigJson" target="bigJson"></flowable:out>
+        <design:stencilid><![CDATA[CallActivity]]></design:stencilid>
+      </extensionElements>
+    </callActivity>
+    <scriptTask id="ScriptTask_13" name="Create Flat Variables" scriptFormat="groovy" flowable:autoStoreVariables="false">
+      <extensionElements>
+        <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+      <script><![CDATA[/*
+ * Flowable Groovy Script: Flatten JSON to local variables (scoping-safe)
+ * Fix: use @Field for script-level vars so methods/closures can access them.
+ */
+
+import groovy.json.JsonSlurper
+import groovy.transform.Field
+
+// ---- configuration ----
+@Field String INPUT_VAR = 'bigJson'  // change to your incoming variable name
+@Field String BASE_KEY  = 'json'       // prefix for created variables
+// -----------------------
+
+// sanitizer for variable name segments
+String sanitize(String s) {
+  def t = (s ?: "")
+    .replaceAll('[^A-Za-z0-9_]', '_')
+    .replaceAll('_{2,}', '_')
+  t = t.replaceAll('^_+','').replaceAll('_+$','')
+  return t ? t : 'x'
+}
+
+// join path with underscores under BASE_KEY
+String makeVarName(List<String> parts) {
+  def sanitized = parts.collect { sanitize(it) }
+  return ([BASE_KEY] + sanitized).join('_')
+}
+
+// Decide what counts as a "leaf"
+boolean isLeaf(Object v) {
+  !(v instanceof Map) && !(v instanceof List)
+}
+
+// Recursively walk
+void walk(Object node, List<String> path) {
+  if (node instanceof Map) {
+    // Uncomment to also store whole objects:
+    // execution.setVariableLocal(makeVarName(path), node)
+    node.each { k, v -> walk(v, path + [k?.toString()]) }
+  } else if (node instanceof List) {
+    // Uncomment to also store whole arrays:
+    // execution.setVariableLocal(makeVarName(path), node)
+    int i = 0
+    node.each { v ->
+      walk(v, path + [String.valueOf(i)])
+      i++
+    }
+  } else {
+    flw.setOutput(makeVarName(path), node)
+  }
+}
+
+// ---- load/parse input ----
+def raw = execution.getVariable(INPUT_VAR)
+if (raw == null) {
+  throw new IllegalArgumentException("Variable '${INPUT_VAR}' not found or null.")
+}
+
+def root
+if (raw instanceof Map || raw instanceof List) {
+  root = raw
+} else {
+  def asText = raw.toString()
+  if (!asText?.trim()) {
+    throw new IllegalArgumentException("Variable '${INPUT_VAR}' is empty.")
+  }
+  root = new JsonSlurper().parseText(asText)
+}
+
+// ---- go! ----
+walk(root, [])
+]]></script>
+    </scriptTask>
+    <userTask id="FormTask_13" name="${randomAssignee.concat(&quot;'s task&quot;)}" flowable:assignee="${randomAssignee}" flowable:dueDate="P1D" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <callActivity id="CallActivity_17" name="Get Random Assignee" calledElement="generateRandomAssignee" flowable:sameDeployment="true" flowable:fallbackToDefaultTenant="true">
+      <extensionElements>
+        <flowable:out source="randomAssignee" target="randomAssignee"></flowable:out>
+        <design:stencilid><![CDATA[CallActivity]]></design:stencilid>
+      </extensionElements>
+    </callActivity>
+    <startEvent id="startnoneevent1" flowable:initiator="initiator" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <design:stencilid><![CDATA[StartNoneEvent]]></design:stencilid>
+      </extensionElements>
+    </startEvent>
+    <endEvent id="EndNoneEvent_2">
+      <extensionElements>
+        <design:stencilid><![CDATA[EndNoneEvent]]></design:stencilid>
+      </extensionElements>
+    </endEvent>
+    <sequenceFlow id="SequenceFlow_14" sourceRef="CallActivity_4" targetRef="ScriptTask_13">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_15" sourceRef="ScriptTask_13" targetRef="CallActivity_17">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_16" sourceRef="FormTask_13" targetRef="EndNoneEvent_2">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_17" sourceRef="CallActivity_17" targetRef="FormTask_13">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_10" sourceRef="startnoneevent1" targetRef="CallActivity_4">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_tooManyVariables">
+    <bpmndi:BPMNPlane bpmnElement="tooManyVariables" id="BPMNPlane_tooManyVariables">
+      <bpmndi:BPMNShape bpmnElement="CallActivity_4" id="BPMNShape_CallActivity_4">
+        <omgdc:Bounds height="80.0" width="100.0" x="425.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ScriptTask_13" id="BPMNShape_ScriptTask_13">
+        <omgdc:Bounds height="80.0" width="100.0" x="614.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="FormTask_13" id="BPMNShape_FormTask_13">
+        <omgdc:Bounds height="80.0" width="100.0" x="968.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="CallActivity_17" id="BPMNShape_CallActivity_17">
+        <omgdc:Bounds height="80.0" width="100.0" x="773.0" y="236.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startnoneevent1" id="BPMNShape_startnoneevent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="317.0" y="261.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="EndNoneEvent_2" id="BPMNShape_EndNoneEvent_2">
+        <omgdc:Bounds height="28.0" width="28.0" x="1152.0" y="262.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_15" id="BPMNEdge_SequenceFlow_15" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="714.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="773.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_16" id="BPMNEdge_SequenceFlow_16" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
+        <omgdi:waypoint x="1068.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1152.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_17" id="BPMNEdge_SequenceFlow_17" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="873.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="968.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_14" id="BPMNEdge_SequenceFlow_14" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="525.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="614.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_10" id="BPMNEdge_SequenceFlow_10" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="347.0" y="276.0"></omgdi:waypoint>
+        <omgdi:waypoint x="425.0" y="276.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

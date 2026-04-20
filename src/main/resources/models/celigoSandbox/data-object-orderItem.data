@@ -1,0 +1,65 @@
+{
+  "fieldMappings" : [ {
+    "label" : "Store Id",
+    "name" : "storeId",
+    "type" : "STRING",
+    "defaultValue" : "",
+    "description" : "",
+    "lookupId" : true
+  }, {
+    "label" : "Ship to State",
+    "name" : "shipToState",
+    "type" : "STRING",
+    "defaultValue" : "",
+    "description" : "",
+    "lookupId" : false
+  }, {
+    "label" : "Sales Threshold",
+    "name" : "salesThreshold",
+    "type" : "INT",
+    "defaultValue" : "",
+    "description" : "",
+    "lookupId" : false
+  }, {
+    "label" : "Store Name",
+    "name" : "storeName",
+    "type" : "STRING",
+    "defaultValue" : "",
+    "description" : "",
+    "lookupId" : false
+  }, {
+    "label" : "Store Group",
+    "name" : "storeGroup",
+    "type" : "STRING",
+    "defaultValue" : "",
+    "description" : "",
+    "lookupId" : false
+  } ],
+  "dataObjectType" : "serviceRegistryDataObject",
+  "sourceId" : "flowableServiceRegistryDataSource",
+  "referencedServiceDefinitionModelKey" : "orderItems",
+  "subType" : null,
+  "definitionIdentityLinks" : {
+    "queryInstances" : {
+      "groups" : [ "flowableUser" ]
+    },
+    "createInstances" : {
+      "groups" : [ "flowableUser" ]
+    },
+    "deleteInstances" : {
+      "groups" : [ "flowableUser" ]
+    },
+    "updateInstances" : {
+      "groups" : [ "flowableUser" ]
+    }
+  },
+  "instanceIdentityLinks" : [ {
+    "type" : "owner",
+    "groups" : [ "flowableUser" ]
+  }, {
+    "type" : "watcher",
+    "groups" : [ "flowableUser" ]
+  } ],
+  "name" : "Order Item",
+  "key" : "orderItem"
+}

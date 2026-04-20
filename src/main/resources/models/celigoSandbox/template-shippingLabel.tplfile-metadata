@@ -1,0 +1,6 @@
+{
+  "id" : "template-shippingLabel",
+  "name" : "Shipping_Label_Template.docx",
+  "type" : "template-file",
+  "resourceType" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+}

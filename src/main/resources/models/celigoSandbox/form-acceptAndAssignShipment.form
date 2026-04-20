@@ -1,0 +1,110 @@
+{
+  "outcomes" : [ {
+    "label" : "Approve",
+    "value" : "approve",
+    "visible" : null,
+    "enabled" : null,
+    "outcomeFormKey" : null,
+    "ignorePayload" : null,
+    "ignoreValidation" : null,
+    "primary" : true,
+    "styleClass" : null,
+    "navigationUrl" : null
+  }, {
+    "label" : "Reject",
+    "value" : "reject",
+    "visible" : null,
+    "enabled" : null,
+    "outcomeFormKey" : null,
+    "ignorePayload" : null,
+    "ignoreValidation" : null,
+    "primary" : null,
+    "styleClass" : null,
+    "navigationUrl" : null
+  } ],
+  "rows" : [ {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-sub-form" ],
+        "stencilId" : "cloud-sub-form"
+      },
+      "labelAlign" : "top",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show",
+        "showBorder" : false,
+        "collapsible" : true,
+        "collapsed" : true,
+        "formRef" : "orderSummary"
+      },
+      "size" : 12,
+      "label" : "Order Summary",
+      "id" : "sub-form1",
+      "type" : "subform"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-hline" ],
+        "stencilId" : "cloud-hline"
+      },
+      "labelAlign" : "top",
+      "ignore" : false,
+      "visible" : true,
+      "enabled" : true,
+      "isRequired" : false,
+      "extraSettings" : {
+        "validationPanelDisplay" : "show"
+      },
+      "size" : 12,
+      "id" : "hline1",
+      "type" : "hline"
+    } ]
+  }, {
+    "cols" : [ {
+      "designInfo" : {
+        "stencilSuperIds" : [ "base-single-select" ],
+        "stencilId" : "user-auto-complete"
+      },
+      "extraSettings" : {
+        "clientSideFiltering" : false,
+        "enableAutocomplete" : true,
+        "autocompleteMinLength" : 0,
+        "tagsEnabled" : false,
+        "preselectAll" : false,
+        "dataSource" : "Rest",
+        "queryUrl" : "{{endpoints.idm}}/users?displayNameLikeIgnoreCase=%25{{$searchText}}%25",
+        "lookupUrl" : "{{endpoints.idm}}/users/{{$id}}",
+        "path" : "data",
+        "formatItem" : "{{$item.displayName}}",
+        "storage" : "Id",
+        "identity" : "id",
+        "linkTarget" : "_blank",
+        "validationPanelDisplay" : "show",
+        "multi" : false
+      },
+      "enabled" : true,
+      "labelAlign" : "top",
+      "value" : "{{fulfillmentAssignee}}",
+      "ignore" : false,
+      "visible" : true,
+      "isRequired" : true,
+      "size" : 12,
+      "label" : "Assign Fulfillment To Employee",
+      "id" : "user-auto-complete1",
+      "type" : "select"
+    } ]
+  } ],
+  "metadata" : {
+    "key" : "acceptAndAssignShipment",
+    "name" : "Accept and Assign Shipment",
+    "description" : null,
+    "version" : "1",
+    "modelType" : "form",
+    "flowableDesignVersion" : 3110,
+    "palette" : "flowable-work-form-palette"
+  }
+}

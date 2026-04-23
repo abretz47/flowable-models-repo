@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/cmmn" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:design="http://flowable.org/design" targetNamespace="http://flowable.org/cmmn" design:palette="flowable-work-case-palette">
+  <case id="auth" name="Auth" flowable:initiatorVariableName="initiator" flowable:candidateStarterGroups="flowableUser">
+    <documentation>test</documentation>
+    <casePlanModel id="onecaseplanmodel1" name="Case plan model" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:caseSequence variableName="sequence"><![CDATA[authSequence]]></flowable:caseSequence>
+        <flowable:default-menu-navigation-size><![CDATA[expanded]]></flowable:default-menu-navigation-size>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <design:stencilid><![CDATA[CasePlanModel]]></design:stencilid>
+      </extensionElements>
+      <planItem id="planItemCaseTask_1" name="Line Item" definitionRef="CaseTask_1">
+        <entryCriterion id="EntryCriterion_2" sentryRef="sentryEntryCriterion_2"></entryCriterion>
+      </planItem>
+      <planItem id="planItemVariableActivity_1" name="Initialize variables" definitionRef="VariableActivity_1"></planItem>
+      <sentry id="sentryEntryCriterion_2">
+        <extensionElements>
+          <design:stencilid><![CDATA[EntryCriterion]]></design:stencilid>
+        </extensionElements>
+        <planItemOnPart id="sentryOnPartEntryCriterion_2" sourceRef="planItemVariableActivity_1">
+          <standardEvent>complete</standardEvent>
+        </planItemOnPart>
+      </sentry>
+      <caseTask id="CaseTask_1" name="Line Item" flowable:fallbackToDefaultTenant="true" flowable:sameDeployment="true">
+        <extensionElements>
+          <design:stencilid><![CDATA[CaseTask]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+        </extensionElements>
+        <caseRefExpression><![CDATA[lineItem]]></caseRefExpression>
+      </caseTask>
+      <task id="VariableActivity_1" name="Initialize variables" flowable:async="true" flowable:exclusive="true" flowable:type="java" flowable:delegateExpression="${initVariablesService}">
+        <extensionElements>
+          <flowable:serviceTaskType><![CDATA[init-variables]]></flowable:serviceTaskType>
+          <flowable:overwrite><![CDATA[true]]></flowable:overwrite>
+          <flowable:variableMapping name="authorizationnbr" valueExpression="${sequence}"></flowable:variableMapping>
+          <flowable:variableMapping name="businessUnitCd" valueType="string" value="100"></flowable:variableMapping>
+          <flowable:variableMapping name="memberId" valueType="string" value="1"></flowable:variableMapping>
+          <flowable:variableMapping name="status" valueType="string" value="APPROVED"></flowable:variableMapping>
+          <flowable:variableMapping name="requesMethodDesc" valueType="string" value="Manual"></flowable:variableMapping>
+          <flowable:variableMapping name="sourceSystem" valueType="string" value="cloud"></flowable:variableMapping>
+          <flowable:variableMapping name="user" valueType="string" value="NCTRACK"></flowable:variableMapping>
+          <design:stencilid><![CDATA[VariableActivity]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+        </extensionElements>
+      </task>
+    </casePlanModel>
+  </case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_auth">
+      <cmmndi:CMMNShape id="CMMNShape_onecaseplanmodel1" cmmnElementRef="onecaseplanmodel1">
+        <dc:Bounds height="679.0" width="830.0" x="270.0" y="120.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemCaseTask_1" cmmnElementRef="planItemCaseTask_1">
+        <dc:Bounds height="80.0" width="100.0" x="540.0" y="257.01041412353516"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_EntryCriterion_2" cmmnElementRef="EntryCriterion_2">
+        <dc:Bounds height="28.0" width="18.0" x="531.0" y="283.01041412353516"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemVariableActivity_1" cmmnElementRef="planItemVariableActivity_1">
+        <dc:Bounds height="80.0" width="100.0" x="318.0" y="257.01041412353516"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNEdge id="CMMNEdge_Connector_3" cmmnElementRef="planItemVariableActivity_1" targetCMMNElementRef="EntryCriterion_2">
+        <di:extension>
+          <flowable:docker type="source" x="100.0" y="40.0"></flowable:docker>
+          <flowable:docker type="target" x="0.0" y="14.0"></flowable:docker>
+        </di:extension>
+        <di:waypoint x="418.0" y="297.01041412353516"></di:waypoint>
+        <di:waypoint x="531.0" y="297.01041412353516"></di:waypoint>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNEdge>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</definitions>

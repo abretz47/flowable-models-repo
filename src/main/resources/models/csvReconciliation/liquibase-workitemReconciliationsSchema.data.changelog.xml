@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd" logicalFilePath="workitemReconciliationsSchema">
+    <!--Design Name: Workitem Reconciliations Schema-->
+    <property name="datetime.type" value="datetime2" dbms="mssql"/>
+    <property name="datetime.type" value="datetime"/>
+    <property name="varchar.type" value="nvarchar" dbms="mssql"/>
+    <property name="varchar.type" value="varchar"/>
+    <property name="serviceDefinitionReferences" value="workItemReconciliations"/>
+
+    <changeSet id="1" author="flowable">
+        <createTable tableName="work_item_reconciliations">
+            <column name="authorization_nbr" type="${varchar.type}(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="tcc_auth_num" type="${varchar.type}(255)"/>
+            <column name="auth_type" type="${varchar.type}(255)"/>
+            <column name="business_line" type="${varchar.type}(255)"/>
+            <column name="created_ts" type="${varchar.type}(255)"/>
+            <column name="dx_code" type="${varchar.type}(255)"/>
+            <column name="start_dt" type="${varchar.type}(255)"/>
+            <column name="end_dt" type="${varchar.type}(255)"/>
+            <column name="last_updated_ts" type="${varchar.type}(255)"/>
+            <column name="member_id" type="${varchar.type}(255)"/>
+            <column name="overall_place_of_service_cd" type="${varchar.type}(255)"/>
+            <column name="overall_service_type" type="${varchar.type}(255)"/>
+            <column name="proc_code" type="${varchar.type}(255)"/>
+            <column name="req_prov_npi" type="${varchar.type}(255)"/>
+            <column name="req_prov_tin" type="${varchar.type}(255)"/>
+            <column name="req_units" type="${varchar.type}(255)"/>
+            <column name="service_type_cd" type="${varchar.type}(255)"/>
+            <column name="serv_pro_npi" type="${varchar.type}(255)"/>
+            <column name="serv_pro_tin" type="${varchar.type}(255)"/>
+            <column name="status" type="${varchar.type}(255)"/>
+            <column name="request_method_desc" type="${varchar.type}(255)"/>
+            <column name="source_system" type="${varchar.type}(255)"/>
+            <column name="incoming_auth" type="${varchar.type}(255)"/>
+            <column name="created_date" type="${varchar.type}(255)"/>
+            <column name="app_unit" type="${varchar.type}(255)"/>
+            <column name="bu_code" type="${varchar.type}(255)"/>
+            <column name="bu_num" type="${varchar.type}(255)"/>
+            <column name="bu_name" type="${varchar.type}(255)"/>
+            <column name="new_req_mthd" type="${varchar.type}(255)"/>
+            <column name="work_group" type="${varchar.type}(255)"/>
+            <column name="group_assignment" type="${varchar.type}(255)"/>
+            <column name="auth_group" type="${varchar.type}(255)"/>
+            <column name="crid" type="${varchar.type}(255)"/>
+            <column name="cr_task" type="${varchar.type}(255)"/>
+            <column name="plan_product" type="${varchar.type}(255)"/>
+            <column name="bp_live_in_cloud_2a" type="${varchar.type}(255)"/>
+            <column name="age" type="${varchar.type}(255)"/>
+            <column name="realm" type="${varchar.type}(255)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

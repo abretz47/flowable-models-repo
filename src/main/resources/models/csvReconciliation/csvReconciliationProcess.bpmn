@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:design="http://flowable.org/design" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://flowable.org/test" exporter="Flowable Design" exporterVersion="2025.2.04" design:palette="flowable-work-process-palette">
+  <process id="csvReconciliationProcess" name="CSV Reconciliation Process" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
+    <extensionElements>
+      <flowable:data-dictionary-model key="csvUploadAndDataReconciliationProcess" sameDeployment="true">
+        <flowable:variable name="startForm" typeName="startForm"></flowable:variable>
+        <flowable:variable name="csvParsingService" typeName="csvParsingService"></flowable:variable>
+        <flowable:variable name="caseInstanceQuery" typeName="caseInstanceQuery"></flowable:variable>
+        <flowable:variable name="taskQuery" typeName="taskQuery"></flowable:variable>
+        <flowable:variable name="reconciliationStep" typeName="reconciliationStep"></flowable:variable>
+      </flowable:data-dictionary-model>
+      <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
+      <design:creationdate><![CDATA[2026-04-21T17:29:06.184Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2026-04-21T17:29:06.184Z]]></design:modificationdate>
+    </extensionElements>
+    <serviceTask id="csvParsingService" name="Parse CSV Input" flowable:delegateExpression="${serviceRegistryService}" flowable:type="service-registry" flowable:extensionId="ServiceRegistryTask">
+      <extensionElements>
+        <flowable:serviceMapping serviceModelKey="csv-parser-service" operationKey="parse-csv"></flowable:serviceMapping>
+        <design:stencilid><![CDATA[ServiceRegistryTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="caseInstanceQuery" name="Query Case Instance Indexes (Auths)" flowable:delegateExpression="${serviceRegistryService}" flowable:type="service-registry" flowable:extensionId="ServiceRegistryTask">
+      <extensionElements>
+        <flowable:serviceMapping serviceModelKey="flowableSearchAPI" operationKey="getCaseInstance"></flowable:serviceMapping>
+        <flowable:inputParameter name="caseDefinitionKey" value="auth"></flowable:inputParameter>
+        <flowable:outputVariableName><![CDATA[caseInstances]]></flowable:outputVariableName>
+        <design:stencilid><![CDATA[ServiceRegistryTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="taskQuery" name="Query Task Indexes (Work Item Tasks)" flowable:delegateExpression="${serviceRegistryService}" flowable:type="service-registry" flowable:extensionId="ServiceRegistryTask">
+      <extensionElements>
+        <flowable:serviceMapping serviceModelKey="flowableSearchAPI" operationKey="getTasks"></flowable:serviceMapping>
+        <flowable:inputParameter name="rootScopeDefinitionKey" value="auth"></flowable:inputParameter>
+        <flowable:outputVariableName><![CDATA[tasks]]></flowable:outputVariableName>
+        <design:stencilid><![CDATA[ServiceRegistryTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+      </extensionElements>
+    </serviceTask>
+    <userTask id="reconciliationStep" name="Reconciliation Step" flowable:assignee="${initiator}" flowable:formKey="csvReconciliationProcessReconciliationStepForm" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:task-candidates-type><![CDATA[all]]></flowable:task-candidates-type>
+        <design:stencilid><![CDATA[FormTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+    </userTask>
+    <scriptTask id="ScriptTask_1" name="Find Missing Work Itms" flowable:async="true" scriptFormat="groovy" flowable:resultVariable="test" flowable:autoStoreVariables="true">
+      <extensionElements>
+        <design:stencilid><![CDATA[ScriptTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[Task]]></design:stencilsuperid>
+      </extensionElements>
+      <script><![CDATA[import java.time.*
+import java.time.temporal.ChronoUnit
+import com.fasterxml.jackson.databind.ObjectMapper
+
+def mapper = new ObjectMapper()
+
+def auths = flw.json.stringToJson(execution.getVariable("workItems"))
+def members = flw.json.stringToJson(execution.getVariable("members"))
+def buInfo = flw.json.stringToJson(execution.getVariable("buInfo"))
+def busPlan = flw.json.stringToJson(execution.getVariable("busPlan"))
+
+def caseInstances = execution.getVariable("caseInstances")
+def tasks = execution.getVariable("tasks")
+
+def authsList = [] as List<Map>
+def membersList = [] as List<Map>
+def buInfoList = [] as List<Map>
+def busPlanList = [] as List<Map>
+  
+def elements = auths.iterator()
+while(elements.hasNext()) {
+  authsList.add(mapper.convertValue(elements.next().get(), Map))
+}
+
+// members.iterator().forEachRemaining(it -> membersList.add(mapper.convertValue(it, Map)))
+elements = members.iterator()
+while(elements.hasNext()) {
+  membersList.add(mapper.convertValue(elements.next().get(), Map))
+}
+
+elements = buInfo.iterator()
+while(elements.hasNext()) {
+  buInfoList.add(mapper.convertValue(elements.next().get(), Map))
+}
+
+elements = busPlan.iterator()
+while(elements.hasNext()) {
+  busPlanList.add(mapper.convertValue(elements.next().get(), Map))
+}
+execution.setVariable("authsList", authsList)
+flw.setOutput("membersList", membersList)
+flw.setOutput("buInfoList", buInfoList)
+flw.setOutput("busPlanList", busPlanList)
+def tables = [
+    OH_RSAuthWList_tst     : authsList as List<Map>,
+    OH_RS_wl_flow_TST      : mapper.convertValue(caseInstances.data, List) as List<Map>,
+    OH_RS_WL_Flow_hist_tst : mapper.convertValue(tasks.data, List) as List<Map>,
+    OH_RSUmvMbrs_tst       : membersList as List<Map>,
+    OH_RS_BusinessUnit     : buInfoList as List<Map>,
+    OH_RS_BusPlan_tst      : busPlanList as List<Map>,
+]
+
+def result = AuthReportBuilder.buildReport(tables)
+flw.setOutput("result", result)
+return result
+
+/*
+Assumed input shape:
+
+tables = [
+  OH_RSAuthWList_tst      : List<Map>,
+  OH_RS_wl_flow_TST       : List<Map>,
+  OH_RS_WL_Flow_hist_tst  : List<Map>,
+  OH_RSUmvMbrs_tst        : List<Map>,
+  OH_RS_BusinessUnit      : List<Map>,
+  OH_RS_BusPlan_tst       : List<Map>
+]
+
+Each row is a Map like:
+[
+  authorizationnbr: "...",
+  businessUnitCd: "...",
+  memberId: "...",
+  createdTs: "...",
+  status: "...",
+  requesMethodDesc: "...",
+  sourceSystem: "...",
+  user: "..."
+]
+*/
+
+class AuthReportBuilder {
+
+    static List<Map> buildReport(Map<String, List<Map>> tables) {
+        List<Map> auths       = tables.OH_RSAuthWList_tst ?: []
+        List<Map> wlFlow      = tables.OH_RS_wl_flow_TST ?: []
+        List<Map> wlFlowHist  = tables.OH_RS_WL_Flow_hist_tst ?: []
+        List<Map> members     = tables.OH_RSUmvMbrs_tst ?: []
+        List<Map> businessU   = tables.OH_RS_BusinessUnit ?: []
+        List<Map> busPlans    = tables.OH_RS_BusPlan_tst ?: []
+
+        def now = Instant.now()
+
+        // Indexes for faster lookups
+		List<Map> wlFlowHistRows = WorklistJsonAdapter.normalizeRows(wlFlowHist)
+		Map<String, List<Map>> wlFlowHistByAuth = wlFlowHistRows.groupBy { norm(it.authorizationnbr) }        
+		List<Map> wlFlowRows = WorklistJsonAdapter.normalizeRows(wlFlow)
+		Map<String, List<Map>> wlFlowByAuth = wlFlowRows.groupBy { norm(it.authorizationnbr) }
+      	Map<String, Map> memberByCd = members.findAll { it.MemberCd != null }
+                .collectEntries { [(norm(it.MemberCd)): it] }
+        Map<String, Map> buByCode = businessU.findAll { it.bucode != null }
+                .collectEntries { [(norm(it.bucode)): it] }
+        Map<String, Map> busPlanByCode = busPlans.findAll { it.Code != null }
+                .collectEntries { [(norm(it.Code)): it] }
+
+        // Branch 1: Not Live In Cloud
+        List<Map> notLiveInCloud = auths.findAll { a ->
+            String authNbr = norm(a.authorizationnbr)
+            Map e = busPlanByCode[norm(a.businessUnitCd)]
+        
+            boolean hasCaseInstance = !!(wlFlowByAuth[authNbr])
+            boolean hasTask = !!(wlFlowHistByAuth[authNbr])
+            boolean liveInCloudFalseOrNull = e == null || !isTrue(e.liveincloud)
+            boolean noTccAuthNum = isBlank(a.tccAuthNum)
+        
+            hasCaseInstance && !hasTask && liveInCloudFalseOrNull && noTccAuthNum
+        }.collect { a ->
+            Map b = firstOrNull(wlFlowByAuth[norm(a.authorizationnbr)])
+            Map c = memberByCd[norm(a.memberId)]
+            Map d = buByCode[norm(a.businessUnitCd)]
+            Map e = busPlanByCode[norm(a.businessUnitCd)]
+        
+            mergeRow(a, b, c, d, e, now)
+        }
+
+        // Branch 2: Live In Cloud
+        List<Map> liveInCloud = auths.findAll { a ->
+            String authNbr = norm(a.authorizationnbr)
+            Map e = busPlanByCode[norm(a.businessUnitCd)]
+
+            boolean noHistWorklist = !(wlFlowHistByAuth[authNbr])
+            boolean noCurrentWorklist = !(wlFlowByAuth[authNbr])
+            boolean liveInCloudTrue = e != null && isTrue(e.liveincloud)
+
+            noHistWorklist && noCurrentWorklist && liveInCloudTrue
+        }.collect { a ->
+            Map b = firstOrNull(wlFlowHistByAuth[norm(a.authorizationnbr)])
+            Map c = memberByCd[norm(a.memberId)]
+            Map d = buByCode[norm(a.businessUnitCd)]
+            Map e = busPlanByCode[norm(a.businessUnitCd)]
+
+            mergeRow(a, b, c, d, e, now)
+        }
+
+        // union distinct *
+        List<Map> unioned = distinctMaps(notLiveInCloud + liveInCloud)
+
+        // Final WHERE block
+        List<Map> filtered = unioned.findAll { row ->
+            keepRow(row)
+        }
+
+        // Final select/order by age
+        filtered.sort { a, b -> safeInt(a.age) <=> safeInt(b.age) }
+    }
+
+    static Map mergeRow(Map a, Map b, Map c, Map d, Map e, Instant now) {
+        Map row = [:]
+        row.putAll(a ?: [:])
+
+        // Bring in selected fields from "b"
+        row.realm = b?.realm
+        row.workgroup = b?.workgroup
+        row.groupassignment = b?.groupassignment
+        row.AuthGroup = b?.AuthGroup
+        row.crid = b?.crid
+        row.crtask = b?.crtask
+
+        // Bring in business unit fields from d
+        if (d != null) {
+            d.each { k, v ->
+                // preserve original auth fields if names collide unless absent
+                if (!row.containsKey(k) || row[k] == null) {
+                    row[k] = v
+                }
+            }
+        }
+
+        row.newReqMthd = a?.requesMethodDesc
+        row.PlanProduct = c?.PlanProduct
+        row.BPcode2 = e?.Code
+        row.liveincloud = e?.liveincloud
+        row.BPLiveInCloud2a = isTrue(e?.liveincloud) ? 'Yes' : 'No'
+        row.BPMarket2 = e?.market
+        row.age = minutesSince(a?.createdTs, now)
+
+        return row
+    }
+
+    static boolean keepRow(Map a) {
+        String requesMethodDesc = up(a.RequesMethodDesc ?: a.requesMethodDesc)
+        String newReqMthd = up(a.newReqMthd)
+        String status = up(a.Status ?: a.status)
+        String bu = str(a.businessUnitCd)
+        String user = up(a.user)
+        String sourceSystem = up(a.sourcesystem ?: a.sourceSystem)
+        String liveInCloud = up(a.BPLiveInCloud2a)
+
+        if (['OK TOC', 'OK CE'].contains(requesMethodDesc)) return false
+        if (status == 'VOID') return false
+
+        if (newReqMthd == 'MEDHOK' && liveInCloud == 'YES') return false
+        if (bu == '78' && ['NCTRACK', 'NC TRACKS'].contains(user)) return false
+        if (bu == '168' && ['NCTRACK', 'NC TRACKS'].contains(user)) return false
+        if (['20', '12', '16', '77'].contains(bu) && sourceSystem.contains('TOC')) return false
+        if (['260', '261', '262', '299'].contains(bu) && sourceSystem.trim() == 'WELLCARE') return false
+        if (['TANGO', 'WELLSKY'].contains(newReqMthd) && liveInCloud == 'YES') return false
+        if (newReqMthd == 'NIA' && liveInCloud == 'YES') return false
+        if (['TOC', 'TURNINGPOINT', 'COASTAL CARE'].contains(newReqMthd)) return false
+        if (bu == '77') return false
+        if (bu == '262' && newReqMthd == 'SMG') return false
+        if (newReqMthd == 'WELLCARE') return false
+        if (newReqMthd == 'SMG') return false
+        if (liveInCloud == 'YES') return false
+
+        return true
+    }
+
+    static List<Map> distinctMaps(List<Map> rows) {
+        Set<String> seen = new LinkedHashSet<>()
+        List<Map> result = []
+        rows.each { row ->
+            String key = canonicalMapKey(row)
+            if (seen.add(key)) {
+                result << row
+            }
+        }
+        result
+    }
+
+    static String canonicalMapKey(Map map) {
+        def sorted = new TreeMap()
+        sorted.putAll(map ?: [:])
+        return sorted.collect { k, v -> "${k}=${v}" }.join('|')
+    }
+
+    static Integer minutesSince(def createdTs, Instant now) {
+        Instant ts = toInstant(createdTs)
+        if (ts == null) return null
+        return ChronoUnit.MINUTES.between(ts, now) as Integer
+    }
+
+    static Instant toInstant(def val) {
+        if (val == null) return null
+        if (val instanceof Instant) return val
+        if (val instanceof Date) return val.toInstant()
+
+        String s = val.toString().trim()
+        if (!s) return null
+
+        // Try ISO first
+        try { return Instant.parse(s) } catch (ignored) {}
+
+        // Try local datetime
+        try { return LocalDateTime.parse(s).atZone(ZoneId.systemDefault()).toInstant() } catch (ignored) {}
+
+        // Try SQL-ish datetime with space
+        try {
+            return java.sql.Timestamp.valueOf(s).toInstant()
+        } catch (ignored) {}
+
+        return null
+    }
+
+    static Map firstOrNull(List<Map> rows) {
+        rows ? rows[0] : null
+    }
+
+    static String norm(def v) {
+        v == null ? null : v.toString().trim()
+    }
+
+    static String str(def v) {
+        v == null ? '' : v.toString().trim()
+    }
+
+    static String up(def v) {
+        str(v).toUpperCase()
+    }
+
+    static boolean isBlank(def v) {
+        v == null || v.toString().trim().isEmpty()
+    }
+
+    static boolean isTrue(def v) {
+        str(v).equalsIgnoreCase('true')
+    }
+
+    static Integer safeInt(def v) {
+        if (v == null) return Integer.MAX_VALUE
+        try {
+            return v as Integer
+        } catch (ignored) {
+            return Integer.MAX_VALUE
+        }
+    }
+}
+
+/*
+Assumptions from your uploaded JSON examples:
+
+1) Each source is shaped like:
+   {
+     "total": ...,
+     "data": [ ... actual rows ... ]
+   }
+
+2) Important row values may exist at:
+   - row.authorizationnbr
+   - row.root.authorizationnbr
+   - row.parent.authorizationnbr
+
+3) We want to treat OH_RS_WL_Flow_hist_tst as the second JSON scheme and
+   normalize it so the rest of the logic can query it like a table.
+*/
+
+class WorklistJsonAdapter {
+
+    static List<Map> extractRows(def payload) {
+        if (payload == null) return []
+        if (payload instanceof List) return payload as List<Map>
+        if (payload instanceof Map && payload.data instanceof List) return payload.data as List<Map>
+        return []
+    }
+
+    static Map normalizeWorklistRow(Map row) {
+        Map root = row.root instanceof Map ? row.root : [:]
+        Map parent = row.parent instanceof Map ? row.parent : [:]
+
+        return [
+            // keep original row too in case you want raw access later
+            _raw                   : row,
+
+            // preferred flattened values
+            id                     : firstNonBlank(row.id),
+            authorizationnbr       : firstNonBlank(row.authorizationnbr, root.authorizationnbr, parent.authorizationnbr),
+            memberId               : firstNonBlank(row.memberId, root.memberId, parent.memberId),
+            businessUnitCd         : firstNonBlank(row.businessUnitCd, root.businessUnitCd, parent.businessUnitCd),
+            requesMethodDesc       : firstNonBlank(row.requesMethodDesc, root.requesMethodDesc, parent.requesMethodDesc),
+            sourceSystem           : firstNonBlank(row.sourceSystem, root.sourceSystem, parent.sourceSystem),
+            user                   : firstNonBlank(row.user, root.user, parent.user),
+            initiator              : firstNonBlank(row.initiator, root.initiator, parent.initiator),
+            status                 : firstNonBlank(row.status, root.status, parent.status),
+
+            // task/case metadata from your JSON examples
+            state                  : firstNonBlank(row.state),
+            tenantId               : firstNonBlank(row.tenantId),
+            scopeId                : firstNonBlank(row.scopeId),
+            rootScopeId            : firstNonBlank(row.rootScopeId),
+            parentScopeId          : firstNonBlank(row.parentScopeId),
+            caseDefinitionName     : firstNonBlank(row.caseDefinitionName),
+            caseDefinitionKey      : firstNonBlank(row.caseDefinitionKey, row.parentScopeDefinitionKey),
+            taskDefinitionId       : firstNonBlank(row.taskDefinitionId),
+
+            // timestamps differ across payloads
+            started                : firstNonBlank(row.started),
+            createTime             : firstNonBlank(row.createTime),
+
+            // keep nested objects available
+            root                   : root,
+            parent                 : parent
+        ]
+    }
+
+    static List<Map> normalizeRows(def payload) {
+        extractRows(payload).collect { normalizeWorklistRow(it as Map) }
+    }
+
+    static Map firstMatchByAuthorization(def payload, String authorizationNbr) {
+        String target = norm(authorizationNbr)
+        if (!target) return null
+
+        return normalizeRows(payload).find { row ->
+            norm(row.authorizationnbr) == target
+        }
+    }
+
+    static List<Map> findAllByAuthorization(def payload, String authorizationNbr) {
+        String target = norm(authorizationNbr)
+        if (!target) return []
+
+        return normalizeRows(payload).findAll { row ->
+            norm(row.authorizationnbr) == target
+        }
+    }
+
+    static boolean existsByAuthorization(def payload, String authorizationNbr) {
+        return firstMatchByAuthorization(payload, authorizationNbr) != null
+    }
+
+    static Map buildHistIndex(def histPayload) {
+        Map<String, List<Map>> grouped = [:].withDefault { [] }
+        normalizeRows(histPayload).each { row ->
+            String key = norm(row.authorizationnbr)
+            if (key) {
+                grouped[key] << row
+            }
+        }
+        return grouped
+    }
+
+    static String firstNonBlank(def... values) {
+        for (def v : values) {
+            if (v != null && v.toString().trim()) {
+                return v.toString().trim()
+            }
+        }
+        return null
+    }
+
+    static String norm(def v) {
+        return v == null ? null : v.toString().trim()
+    }
+}]]></script>
+    </scriptTask>
+    <serviceTask id="DataObjectCreateTask_1" name="Data object create" flowable:delegateExpression="${dataObjectServiceTask}" flowable:type="data-object">
+      <extensionElements>
+        <flowable:dataObjectMapping definitionKey="workitemReconciliations" operationKey="create" type="create"></flowable:dataObjectMapping>
+        <flowable:inputParameter name="authorizationnbr" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="tccAuthNum" value="${element.tccAuthNum}"></flowable:inputParameter>
+        <flowable:inputParameter name="Auth_Type" value="${element.Auth_Type}"></flowable:inputParameter>
+        <flowable:inputParameter name="BusinessLine" value="${element.BusinessLine}"></flowable:inputParameter>
+        <flowable:inputParameter name="createdTs" value="${element.createdTs}"></flowable:inputParameter>
+        <flowable:inputParameter name="DXCode" value="${element.DXCode}"></flowable:inputParameter>
+        <flowable:inputParameter name="startDt" value="${element.startDt}"></flowable:inputParameter>
+        <flowable:inputParameter name="endDt" value="${element.endDt}"></flowable:inputParameter>
+        <flowable:inputParameter name="lastUpdatedTs" value="${element.lastUpdatedTs}"></flowable:inputParameter>
+        <flowable:inputParameter name="memberId" value="${element.memberId}"></flowable:inputParameter>
+        <flowable:inputParameter name="overallPlaceOfServiceCd" value="${element.overallPlaceOfServiceCd}"></flowable:inputParameter>
+        <flowable:inputParameter name="overallServiceType" value="${element.overallServiceType}"></flowable:inputParameter>
+        <flowable:inputParameter name="procCode" value="${element.ProcCode}"></flowable:inputParameter>
+        <flowable:inputParameter name="reqProvNPI" value="${element.ReqProvNPI}"></flowable:inputParameter>
+        <flowable:inputParameter name="ReqProvTIN" value="${element.ReqProvTIN}"></flowable:inputParameter>
+        <flowable:inputParameter name="reqUnits" value="${element.reqUnits}"></flowable:inputParameter>
+        <flowable:inputParameter name="service_Type_Cd" value="${element.service_Type_Cd}"></flowable:inputParameter>
+        <flowable:inputParameter name="ServProvNPI" value="${element.ServProvNPI}"></flowable:inputParameter>
+        <flowable:inputParameter name="ServProvTIN" value="${element.ServProvTIN}"></flowable:inputParameter>
+        <flowable:inputParameter name="Status" value="${element.Status}"></flowable:inputParameter>
+        <flowable:inputParameter name="RequesMethodDesc" value="${element.RequesMethodDesc}"></flowable:inputParameter>
+        <flowable:inputParameter name="sourcesystem" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="Incoming_auth" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="created_Date" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="appUnits" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="buCode" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="buNum" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="buName" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="newReqMthd" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="workgroup" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="groupassignment" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="AuthGroup" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="crid" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="crtask" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="PlanProduct" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="BPliveInCloud2a" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="age" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <flowable:inputParameter name="realm" value="${element.authorizationnbr}"></flowable:inputParameter>
+        <design:stencilid><![CDATA[DataObjectCreateTask]]></design:stencilid>
+        <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+      </extensionElements>
+      <multiInstanceLoopCharacteristics isSequential="true" flowable:collection="test" flowable:elementVariable="element">
+        <extensionElements></extensionElements>
+      </multiInstanceLoopCharacteristics>
+    </serviceTask>
+    <startEvent id="startForm" name="Upload CSV File" flowable:initiator="initiator" flowable:formKey="csvReconciliationProcessStartForm" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <design:stencilid><![CDATA[StartNoneEvent]]></design:stencilid>
+        <design:display_ref_in_diagram><![CDATA[true]]></design:display_ref_in_diagram>
+      </extensionElements>
+    </startEvent>
+    <endEvent id="endEvent" name="End Process">
+      <extensionElements>
+        <design:stencilid><![CDATA[EndNoneEvent]]></design:stencilid>
+        <design:display_ref_in_diagram><![CDATA[true]]></design:display_ref_in_diagram>
+      </extensionElements>
+    </endEvent>
+    <sequenceFlow id="flow3" sourceRef="caseInstanceQuery" targetRef="taskQuery">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_1" sourceRef="taskQuery" targetRef="ScriptTask_1">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="flow5" sourceRef="reconciliationStep" targetRef="endEvent">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_2" sourceRef="ScriptTask_1" targetRef="DataObjectCreateTask_1">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_3" sourceRef="DataObjectCreateTask_1" targetRef="reconciliationStep">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="SequenceFlow_4" sourceRef="startForm" targetRef="caseInstanceQuery">
+      <extensionElements>
+        <design:stencilid><![CDATA[SequenceFlow]]></design:stencilid>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_csvReconciliationProcess">
+    <bpmndi:BPMNPlane bpmnElement="csvReconciliationProcess" id="BPMNPlane_csvReconciliationProcess">
+      <bpmndi:BPMNShape bpmnElement="csvParsingService" id="BPMNShape_csvParsingService">
+        <omgdc:Bounds height="80.0" width="100.0" x="199.0" y="439.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="caseInstanceQuery" id="BPMNShape_caseInstanceQuery">
+        <omgdc:Bounds height="80.0" width="100.0" x="350.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="taskQuery" id="BPMNShape_taskQuery">
+        <omgdc:Bounds height="80.0" width="100.0" x="500.0" y="219.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="reconciliationStep" id="BPMNShape_reconciliationStep">
+        <omgdc:Bounds height="80.0" width="100.0" x="1095.0" y="220.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ScriptTask_1" id="BPMNShape_ScriptTask_1">
+        <omgdc:Bounds height="80.0" width="100.0" x="685.0" y="219.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="DataObjectCreateTask_1" id="BPMNShape_DataObjectCreateTask_1">
+        <omgdc:Bounds height="80.00000000000003" width="100.0" x="905.4444473437326" y="218.99999999999997"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="startForm" id="BPMNShape_startForm">
+        <omgdc:Bounds height="30.0" width="30.0" x="101.0" y="244.0"></omgdc:Bounds>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.0" width="88.0" x="71.0" y="291.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endEvent" id="BPMNShape_endEvent">
+        <omgdc:Bounds height="28.0" width="28.0" x="1255.0" y="245.0"></omgdc:Bounds>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="18.0" width="68.0" x="1233.0" y="420.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="450.0" y="260.0"></omgdi:waypoint>
+        <omgdi:waypoint x="475.0" y="260.0"></omgdi:waypoint>
+        <omgdi:waypoint x="475.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="500.0" y="259.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
+        <omgdi:waypoint x="1195.0" y="260.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1255.0" y="260.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_4" id="BPMNEdge_SequenceFlow_4" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="131.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="240.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="240.0" y="260.0"></omgdi:waypoint>
+        <omgdi:waypoint x="350.0" y="260.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_2" id="BPMNEdge_SequenceFlow_2" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="785.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="845.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="845.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="905.0" y="259.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_3" id="BPMNEdge_SequenceFlow_3" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="1005.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1050.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1050.0" y="260.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1095.0" y="260.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_1" id="BPMNEdge_SequenceFlow_1" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="600.0" y="259.0"></omgdi:waypoint>
+        <omgdi:waypoint x="685.0" y="259.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

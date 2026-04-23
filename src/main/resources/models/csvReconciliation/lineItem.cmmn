@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/cmmn" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:design="http://flowable.org/design" targetNamespace="http://flowable.org/cmmn" design:palette="flowable-work-case-palette">
+  <case id="lineItem" name="Line Item" flowable:initiatorVariableName="initiator" flowable:candidateStarterGroups="flowableUser">
+    <casePlanModel id="onecaseplanmodel1" name="Case plan model" flowable:formFieldValidation="false">
+      <extensionElements>
+        <flowable:default-menu-navigation-size><![CDATA[expanded]]></flowable:default-menu-navigation-size>
+        <flowable:work-form-field-validation><![CDATA[false]]></flowable:work-form-field-validation>
+        <design:stencilid><![CDATA[CasePlanModel]]></design:stencilid>
+      </extensionElements>
+      <planItem id="planItemVariableActivity_1" name="Initialize variables" definitionRef="VariableActivity_1"></planItem>
+      <planItem id="planItemEventListener_1" definitionRef="EventListener_1"></planItem>
+      <task id="VariableActivity_1" name="Initialize variables" flowable:type="java" flowable:delegateExpression="${initVariablesService}">
+        <extensionElements>
+          <flowable:serviceTaskType><![CDATA[init-variables]]></flowable:serviceTaskType>
+          <flowable:overwrite><![CDATA[true]]></flowable:overwrite>
+          <flowable:variableMapping name="authorizationnbr" valueExpression="${root.sequence}"></flowable:variableMapping>
+          <flowable:variableMapping name="businessUnitCd" valueType="string" value="test"></flowable:variableMapping>
+          <flowable:variableMapping name="memberId" valueType="string" value="1"></flowable:variableMapping>
+          <flowable:variableMapping name="status" valueType="string" value="approved"></flowable:variableMapping>
+          <flowable:variableMapping name="requesMethodDesc" valueType="string" value="test"></flowable:variableMapping>
+          <flowable:variableMapping name="sourceSystem" valueType="string" value="cloud"></flowable:variableMapping>
+          <flowable:variableMapping name="user" valueType="string" value="aaron.bretz"></flowable:variableMapping>
+          <design:stencilid><![CDATA[VariableActivity]]></design:stencilid>
+          <design:stencilsuperid><![CDATA[ServiceTask]]></design:stencilsuperid>
+        </extensionElements>
+      </task>
+      <eventListener id="EventListener_1">
+        <extensionElements>
+          <design:stencilid><![CDATA[EventListener]]></design:stencilid>
+        </extensionElements>
+      </eventListener>
+    </casePlanModel>
+  </case>
+  <cmmndi:CMMNDI>
+    <cmmndi:CMMNDiagram id="CMMNDiagram_lineItem">
+      <cmmndi:CMMNShape id="CMMNShape_onecaseplanmodel1" cmmnElementRef="onecaseplanmodel1">
+        <dc:Bounds height="679.0" width="830.0" x="270.0" y="120.0"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemVariableActivity_1" cmmnElementRef="planItemVariableActivity_1">
+        <dc:Bounds height="80.0" width="100.0" x="349.0" y="246.01041412353516"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+      <cmmndi:CMMNShape id="CMMNShape_planItemEventListener_1" cmmnElementRef="planItemEventListener_1">
+        <dc:Bounds height="30.0" width="30.0" x="537.0" y="271.01041412353516"></dc:Bounds>
+        <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
+      </cmmndi:CMMNShape>
+    </cmmndi:CMMNDiagram>
+  </cmmndi:CMMNDI>
+</definitions>

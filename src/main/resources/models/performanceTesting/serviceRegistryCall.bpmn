@@ -3,8 +3,8 @@
   <process id="serviceRegistryCall" name="Service Registry Call" isExecutable="true" flowable:candidateStarterGroups="flowableUser">
     <extensionElements>
       <design:stencilid><![CDATA[BPMNDiagram]]></design:stencilid>
-      <design:creationdate><![CDATA[2026-04-20T16:32:22.902Z]]></design:creationdate>
-      <design:modificationdate><![CDATA[2026-04-20T16:32:22.902Z]]></design:modificationdate>
+      <design:creationdate><![CDATA[2026-04-21T15:32:16.989Z]]></design:creationdate>
+      <design:modificationdate><![CDATA[2026-04-21T15:32:16.989Z]]></design:modificationdate>
     </extensionElements>
     <serviceTask id="ServiceRegistryTask_1" name="Service registry task" flowable:async="true" flowable:delegateExpression="${serviceRegistryService}" flowable:type="service-registry" flowable:extensionId="ServiceRegistryTask">
       <extensionElements>

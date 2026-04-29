@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions xmlns="http://www.omg.org/spec/CMMN/20151109/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:flowable="http://flowable.org/cmmn" xmlns:cmmndi="http://www.omg.org/spec/CMMN/20151109/CMMNDI" xmlns:dc="http://www.omg.org/spec/CMMN/20151109/DC" xmlns:di="http://www.omg.org/spec/CMMN/20151109/DI" xmlns:design="http://flowable.org/design" targetNamespace="http://flowable.org/cmmn" design:palette="flowable-engage-case-palette">
   <case id="OOP_C001" name="OOP_C001 Online Ordering Processing" flowable:initiatorVariableName="initiator" flowable:candidateStarterGroups="flowableUser">
+    <documentation>hi</documentation>
     <casePlanModel id="onecaseplanmodel1" name="Case plan model" flowable:formKey="OOP_F001" flowable:formFieldValidation="false" autoComplete="true">
       <extensionElements>
         <flowable:caseSequence variableName="caseSequence"><![CDATA[OOB_SEQ001]]></flowable:caseSequence>
@@ -245,38 +246,38 @@ Your OnlineShop]]></flowable:expression>
       <cmmndi:CMMNShape id="CMMNShape_planItemuserEventListener1" cmmnElementRef="planItemuserEventListener1">
         <dc:Bounds height="30.0" width="30.0" x="653.249" y="410.0"></dc:Bounds>
         <cmmndi:CMMNLabel>
-          <dc:Bounds height="18.0" width="107.0" x="614.749" y="444.0"></dc:Bounds>
+          <dc:Bounds height="18.0" width="110.0" x="613.249" y="444.0"></dc:Bounds>
         </cmmndi:CMMNLabel>
       </cmmndi:CMMNShape>
       <cmmndi:CMMNEdge id="CMMNEdge_connector1" cmmnElementRef="planItemexpandedStage1" targetCMMNElementRef="entryCriterion1">
         <di:extension>
-          <flowable:docker type="source" x="239.0" y="79.0"></flowable:docker>
-          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+          <flowable:docker type="source" x="239.0" y="157.5"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="0.0"></flowable:docker>
         </di:extension>
-        <di:waypoint x="343.2402597402597" y="246.95"></di:waypoint>
-        <di:waypoint x="342.6338446282764" y="309.2089552238806"></di:waypoint>
+        <di:waypoint x="344.0" y="247.5"></di:waypoint>
+        <di:waypoint x="342.5" y="309.0"></di:waypoint>
         <cmmndi:CMMNLabel>
-          <dc:Bounds height="18.0" width="49.0" x="520.1875" y="298.0"></dc:Bounds>
+          <dc:Bounds height="18.0" width="51.0" x="520.1875" y="298.0"></dc:Bounds>
         </cmmndi:CMMNLabel>
       </cmmndi:CMMNEdge>
       <cmmndi:CMMNEdge id="CMMNEdge_connector2" cmmnElementRef="planItemexpandedStage2" targetCMMNElementRef="entryCriterion2">
         <di:extension>
-          <flowable:docker type="source" x="238.0" y="87.0"></flowable:docker>
-          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+          <flowable:docker type="source" x="238.0" y="173.5"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="0.0"></flowable:docker>
         </di:extension>
-        <di:waypoint x="344.1481896551724" y="495.95000000000005"></di:waypoint>
-        <di:waypoint x="344.2259266335499" y="541.0"></di:waypoint>
+        <di:waypoint x="344.0" y="496.5"></di:waypoint>
+        <di:waypoint x="344.25" y="541.0"></di:waypoint>
         <cmmndi:CMMNLabel>
-          <dc:Bounds height="18.0" width="49.0" x="543.140625" y="533.0"></dc:Bounds>
+          <dc:Bounds height="18.0" width="51.0" x="543.140625" y="533.0"></dc:Bounds>
         </cmmndi:CMMNLabel>
       </cmmndi:CMMNEdge>
       <cmmndi:CMMNEdge id="CMMNEdge_cmmnConnector_4" cmmnElementRef="planItemuserEventListener1" targetCMMNElementRef="cmmnEntrySentry_3">
         <di:extension>
-          <flowable:docker type="source" x="15.0" y="15.0"></flowable:docker>
-          <flowable:docker type="target" x="9.0" y="14.0"></flowable:docker>
+          <flowable:docker type="source" x="14.750999999999976" y="0.0"></flowable:docker>
+          <flowable:docker type="target" x="9.0" y="28.0"></flowable:docker>
         </di:extension>
-        <di:waypoint x="668.249" y="410.0"></di:waypoint>
-        <di:waypoint x="668.249" y="388.8936661961892"></di:waypoint>
+        <di:waypoint x="668.0" y="410.0"></di:waypoint>
+        <di:waypoint x="668.249" y="389.0"></di:waypoint>
         <cmmndi:CMMNLabel></cmmndi:CMMNLabel>
       </cmmndi:CMMNEdge>
     </cmmndi:CMMNDiagram>
